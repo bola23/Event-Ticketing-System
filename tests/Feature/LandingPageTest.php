@@ -15,13 +15,6 @@ class LandingPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        session()->put('locale', 'en');
-        app()->setLocale('en');
-    }
-
     public function test_landing_page_renders_for_an_event(): void
     {
         $event = Event::factory()->create([
@@ -30,7 +23,7 @@ class LandingPageTest extends TestCase
             'status' => EventStatus::Published,
         ]);
 
-        $response = $this->get(route('landing.show', $event));
+        $response = $this->get(route('landing.show', $event).'?lang=en');
 
         $response->assertStatus(200);
         $response->assertSee('Content Creators Summit');
@@ -45,7 +38,7 @@ class LandingPageTest extends TestCase
             'value_en' => 'Where digital creators meet.',
         ]);
 
-        $response = $this->get(route('landing.show', $event));
+        $response = $this->get(route('landing.show', $event).'?lang=en');
 
         $response->assertSee('Where digital creators meet.');
     }
