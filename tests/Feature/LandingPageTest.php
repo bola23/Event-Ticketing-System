@@ -51,4 +51,47 @@ class LandingPageTest extends TestCase
 
         $response->assertDontSee('id="about"', false);
     }
+
+    public function test_speakers_section_lists_speaker_names(): void
+    {
+        $event = Event::factory()->create();
+        \App\Models\Speaker::factory()->for($event)->create(['name_en' => 'Jane Creator']);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('Jane Creator');
+    }
+
+    public function test_partners_section_omitted_when_no_sponsors(): void
+    {
+        $event = Event::factory()->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertDontSee('id="partners"', false);
+    }
+
+    public function test_faq_section_lists_questions(): void
+    {
+        $event = Event::factory()->create();
+        \App\Models\Faq::factory()->for($event)->create(['question_en' => 'How do I pay?']);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('How do I pay?');
+    }
+
+    public function test_location_section_shows_venue_intro(): void
+    {
+        $event = Event::factory()->create();
+        LandingPageContent::factory()->for($event)->create([
+            'section' => LandingPageSection::Location,
+            'field_key' => 'intro',
+            'value_en' => 'Held at the Convention Center.',
+        ]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('Held at the Convention Center.');
+    }
 }
