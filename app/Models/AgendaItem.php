@@ -21,6 +21,8 @@ class AgendaItem extends Model
 
     protected $casts = [
         'day_date' => 'date',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
         'type' => AgendaItemType::class,
     ];
 
