@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\EventStatus;
+use App\Enums\LandingPageSection;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -60,6 +61,17 @@ class Event extends Model
     public function faqs(): HasMany
     {
         return $this->hasMany(Faq::class)->orderBy('sort_order');
+    }
+
+    public function landingPageContent(): HasMany
+    {
+        return $this->hasMany(LandingPageContent::class);
+    }
+
+    public function contentFor(LandingPageSection $section, string $fieldKey): ?LandingPageContent
+    {
+        return $this->landingPageContent
+            ->first(fn (LandingPageContent $content) => $content->section === $section && $content->field_key === $fieldKey);
     }
 
     protected static function newFactory(): EventFactory
