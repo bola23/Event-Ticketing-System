@@ -1,0 +1,21 @@
+/* resources/css/app.css */
+@import "tailwindcss";
+
+@theme {
+  --color-ccs-coral: #ff7e71;
+  --color-ccs-red: #d33333;
+  --color-ccs-maroon: #430d14;
+  --color-ccs-black: #171f22;
+  --color-ccs-teal: #2a7675;
+  --color-ccs-teal-light: #7ccbcf;
+  --color-ccs-gold: #fad48b;
+  --color-ccs-gold-dark: #a48755;
+}
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+.ccs-hero {
+  background: linear-gradient(135deg, var(--color-ccs-coral) 0%, var(--color-ccs-coral) 12%, var(--color-ccs-red) 13%, var(--color-ccs-maroon) 55%, var(--color-ccs-black) 100%);
+}
