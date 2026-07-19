@@ -7,7 +7,9 @@ namespace Tests\Feature;
 use App\Enums\EventStatus;
 use App\Enums\LandingPageSection;
 use App\Models\Event;
+use App\Models\Faq;
 use App\Models\LandingPageContent;
+use App\Models\Speaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,7 +57,7 @@ class LandingPageTest extends TestCase
     public function test_speakers_section_lists_speaker_names(): void
     {
         $event = Event::factory()->create();
-        \App\Models\Speaker::factory()->for($event)->create(['name_en' => 'Jane Creator']);
+        Speaker::factory()->for($event)->create(['name_en' => 'Jane Creator']);
 
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
@@ -74,7 +76,7 @@ class LandingPageTest extends TestCase
     public function test_faq_section_lists_questions(): void
     {
         $event = Event::factory()->create();
-        \App\Models\Faq::factory()->for($event)->create(['question_en' => 'How do I pay?']);
+        Faq::factory()->for($event)->create(['question_en' => 'How do I pay?']);
 
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
