@@ -42,6 +42,11 @@ class Event extends Model
         return $this->hasMany(Sponsor::class)->orderBy('sort_order');
     }
 
+    public function ticketTypes(): HasMany
+    {
+        return $this->hasMany(TicketType::class)->orderBy('sort_order');
+    }
+
     protected static function newFactory(): EventFactory
     {
         return EventFactory::new();
