@@ -37,6 +37,11 @@ class Event extends Model
         return $this->hasMany(Speaker::class)->orderBy('sort_order');
     }
 
+    public function sponsors(): HasMany
+    {
+        return $this->hasMany(Sponsor::class)->orderBy('sort_order');
+    }
+
     protected static function newFactory(): EventFactory
     {
         return EventFactory::new();
