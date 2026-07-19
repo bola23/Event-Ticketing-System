@@ -8,6 +8,7 @@ use App\Enums\EventStatus;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -29,6 +30,11 @@ class Event extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function speakers(): HasMany
+    {
+        return $this->hasMany(Speaker::class)->orderBy('sort_order');
     }
 
     protected static function newFactory(): EventFactory
