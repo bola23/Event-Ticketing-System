@@ -23,11 +23,9 @@ Animations should be subtle.
 
 Avoid trendy effects.
 
-Bootstrap 5.
+Tailwind CSS.
 
-SCSS.
-
-No Tailwind.
+No Bootstrap.
 
 ## Brand identity
 
@@ -47,4 +45,4 @@ Palette:
 
 ## Bilingual / RTL
 
-The platform is bilingual: Arabic (RTL) and English (LTR). Layouts, Bootstrap grid direction, and typography must work in both directions — do not hardcode LTR-only markup. Per-event and per-Ticket-Type content is reusable across events, so brand colors above are the CCS default theme, not hardcoded platform-wide values (see CLAUDE.md: never hardcode event-specific values).
+The platform is bilingual: Arabic (RTL) and English (LTR). Layouts, grid direction (Tailwind's `rtl:`/`ltr:` variants), and typography must work in both directions — do not hardcode LTR-only markup. Per-event and per-Ticket-Type content is reusable across events, so brand colors above are the CCS default theme, not hardcoded platform-wide values (see CLAUDE.md: never hardcode event-specific values).

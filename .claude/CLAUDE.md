@@ -8,8 +8,7 @@ Technology
 - PHP 8.3
 - MySQL
 - Laravel Boost
-- Bootstrap 5
-- SCSS
+- Tailwind CSS
 - AlpineJS where needed
 
 Architecture

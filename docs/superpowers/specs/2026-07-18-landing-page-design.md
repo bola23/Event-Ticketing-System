@@ -87,7 +87,7 @@ No approval workflow, no coupon management, no reports — those stay with their
 
 ## Visual / brand direction
 
-CCS palette: coral `#ff7e71`, red `#d33333`, dark maroon `#430d14`, near-black `#171f22`, teal `#2a7675`, light teal `#7ccbcf`, gold `#fad48b` / `#a48755`. Dark theme, premium/minimal/corporate style, large typography, generous whitespace, subtle animations only (see `.claude/skills/ui-system.md`). Bootstrap 5 + SCSS, no Tailwind. Bilingual Arabic (RTL) / English (LTR) with a language switcher; layouts must not hardcode LTR-only markup.
+CCS palette: coral `#ff7e71`, red `#d33333`, dark maroon `#430d14`, near-black `#171f22`, teal `#2a7675`, light teal `#7ccbcf`, gold `#fad48b` / `#a48755`. Dark theme, premium/minimal/corporate style, large typography, generous whitespace, subtle animations only (see `.claude/skills/ui-system.md`). Tailwind CSS, no Bootstrap (revised mid-implementation from the original Bootstrap 5 + SCSS choice — see plan's Global Constraints for rationale). Bilingual Arabic (RTL) / English (LTR) with a language switcher; layouts must not hardcode LTR-only markup.
 
 ## Testing strategy
 

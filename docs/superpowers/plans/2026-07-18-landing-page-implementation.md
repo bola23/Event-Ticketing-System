@@ -6,12 +6,12 @@
 
 **Architecture:** Laravel 12 MVC with a Service Layer (business logic) and Repository Pattern (data access) between thin Controllers and Eloquent Models. Public routes are read-only and scoped by `{event}` slug. Admin routes sit behind Laravel's built-in session auth (`users` table) and reuse the same Services/Repositories for writes. Bilingual content uses paired `_ar`/`_en` columns on the same row — no separate translations table.
 
-**Tech Stack:** Laravel 12, PHP 8.3, MySQL, Laravel Boost, Bootstrap 5 + SCSS (Vite), AlpineJS where needed.
+**Tech Stack:** Laravel 12, PHP 8.3, MySQL, Laravel Boost, Tailwind CSS v4 (Vite plugin), AlpineJS where needed.
 
 ## Global Constraints
 
 - Laravel 12, PHP 8.3, MySQL. Laravel Boost installed as a dev dependency.
-- Bootstrap 5 + SCSS only — no Tailwind. AlpineJS for light interactivity (accordions, countdown, language toggle).
+- Tailwind CSS v4 only — no Bootstrap (revised from the original Bootstrap 5 + SCSS choice after Task 2 was first implemented; see Task 2's note). AlpineJS for light interactivity (accordions, countdown, language toggle) — Tailwind ships no JS components, so anything Bootstrap used to handle via `data-bs-*` (e.g. the FAQ accordion) is now plain Alpine `x-data`/`x-show`.
 - MVC + Service Layer + Repository Pattern where appropriate. Controllers orchestrate only; they never contain business logic. Services contain business logic. Models contain relationships only (per `.claude/skills/coding-standards.md`).
 - Strict typing (`declare(strict_types=1);`) in all new PHP files.
 - No authentication for the public/attendee side. Admin routes require Laravel's built-in session auth against a `users` table.
@@ -107,92 +107,90 @@ git add -A
 git commit -m "chore: scaffold Laravel 12 app with MySQL and Laravel Boost"
 ```
 
-### Task 2: Bootstrap 5 + SCSS asset pipeline and bilingual base layout
+### Task 2: Tailwind CSS asset pipeline and bilingual base layout
+
+> **Revised:** this task was originally written and first implemented for Bootstrap 5 + SCSS. Mid-implementation the project switched to Tailwind CSS (see plan Global Constraints). If Bootstrap/SCSS files already exist from an earlier pass, remove them (`resources/scss/`, the `bootstrap`/`@popperjs/core`/`sass` devDependencies) as part of Step 1 rather than leaving both stacks installed.
 
 **Files:**
-- Create: `resources/scss/app.scss`
-- Create: `resources/scss/_variables.scss`
-- Modify: `resources/js/app.js` (import Bootstrap JS + AlpineJS)
+- Create: `resources/css/app.css`
+- Modify: `resources/js/app.js` (AlpineJS only — Tailwind ships no JS)
 - Modify: `vite.config.js`
 - Create: `resources/views/layouts/app.blade.php`
+- Modify: `resources/views/welcome.blade.php` (Tailwind placeholder)
 - Create: `app/Http/Middleware/SetLocale.php`
 - Modify: `bootstrap/app.php` (register middleware)
 - Test: `tests/Feature/LocaleSwitchTest.php`
 
 **Interfaces:**
 - Consumes: nothing from Task 1 beyond the base skeleton.
-- Produces: `layouts/app` Blade layout (accepts a `$title` slot/section), and `app()->getLocale()` driven by `SetLocale` middleware — every later view extends this layout.
+- Produces: `layouts/app` Blade layout (accepts a `$title` slot/section), and `app()->getLocale()` driven by `SetLocale` middleware — every later view extends this layout. Custom CCS color utilities (`bg-ccs-red`, `text-ccs-gold`, etc.) are available everywhere via Tailwind's `@theme` mechanism, defined once in `resources/css/app.css`.
 
-- [ ] **Step 1: Install Bootstrap and Sass**
+- [ ] **Step 1: Install Tailwind and AlpineJS (remove Bootstrap/Sass if present)**
 
 Run:
 ```bash
-npm install bootstrap @popperjs/core sass alpinejs --save-dev
+npm uninstall bootstrap @popperjs/core sass
+npm install tailwindcss @tailwindcss/vite alpinejs --save-dev
 ```
+If `resources/scss/` exists from an earlier Bootstrap-based pass, delete it — Tailwind uses a single CSS entrypoint, not SCSS partials.
 
-- [ ] **Step 2: Create the SCSS variables file using the CCS palette**
+- [ ] **Step 2: Create the Tailwind entrypoint with the CCS theme tokens**
 
-```scss
-// resources/scss/_variables.scss
-$ccs-coral: #ff7e71;
-$ccs-red: #d33333;
-$ccs-maroon: #430d14;
-$ccs-black: #171f22;
-$ccs-teal: #2a7675;
-$ccs-teal-light: #7ccbcf;
-$ccs-gold: #fad48b;
-$ccs-gold-dark: #a48755;
+Tailwind v4 needs no separate config file for simple theme tokens — custom colors declared in `@theme` automatically become utility classes (`bg-ccs-red`, `text-ccs-gold`, `border-ccs-teal`, etc.):
 
-$body-bg: $ccs-black;
-$body-color: #ffffff;
-$primary: $ccs-red;
-$secondary: $ccs-teal;
-```
+```css
+/* resources/css/app.css */
+@import "tailwindcss";
 
-- [ ] **Step 3: Create the app stylesheet importing Bootstrap with the overrides**
-
-```scss
-// resources/scss/app.scss
-@import "variables";
-@import "bootstrap/scss/bootstrap";
+@theme {
+  --color-ccs-coral: #ff7e71;
+  --color-ccs-red: #d33333;
+  --color-ccs-maroon: #430d14;
+  --color-ccs-black: #171f22;
+  --color-ccs-teal: #2a7675;
+  --color-ccs-teal-light: #7ccbcf;
+  --color-ccs-gold: #fad48b;
+  --color-ccs-gold-dark: #a48755;
+}
 
 [dir="rtl"] {
   text-align: right;
 }
 
 .ccs-hero {
-  background: linear-gradient(135deg, $ccs-coral 0%, $ccs-coral 12%, $ccs-red 13%, $ccs-maroon 55%, $ccs-black 100%);
+  background: linear-gradient(135deg, var(--color-ccs-coral) 0%, var(--color-ccs-coral) 12%, var(--color-ccs-red) 13%, var(--color-ccs-maroon) 55%, var(--color-ccs-black) 100%);
 }
 ```
 
-- [ ] **Step 4: Wire Bootstrap JS + AlpineJS in `resources/js/app.js`**
+- [ ] **Step 3: Wire AlpineJS in `resources/js/app.js`**
 
 ```js
-import 'bootstrap';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 Alpine.start();
 ```
 
-- [ ] **Step 5: Point Vite at the new SCSS entrypoint**
+- [ ] **Step 4: Point Vite at the Tailwind plugin and the new CSS entrypoint**
 
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/scss/app.scss', 'resources/js/app.js'],
+            input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+        tailwindcss(),
     ],
 });
 ```
 
-- [ ] **Step 6: Write the failing locale test**
+- [ ] **Step 5: Write the failing locale test**
 
 ```php
 <?php
@@ -223,12 +221,12 @@ class LocaleSwitchTest extends TestCase
 }
 ```
 
-- [ ] **Step 7: Run test to verify it fails**
+- [ ] **Step 6: Run test to verify it fails**
 
 Run: `php artisan test --filter=LocaleSwitchTest`
 Expected: FAIL (no `dir="rtl"`/`dir="ltr"` in the default welcome view yet)
 
-- [ ] **Step 8: Create the `SetLocale` middleware**
+- [ ] **Step 7: Create the `SetLocale` middleware**
 
 ```php
 <?php
@@ -256,7 +254,7 @@ class SetLocale
 }
 ```
 
-- [ ] **Step 9: Register the middleware globally**
+- [ ] **Step 8: Register the middleware globally**
 
 ```php
 // bootstrap/app.php
@@ -267,7 +265,7 @@ class SetLocale
 })
 ```
 
-- [ ] **Step 10: Create the base bilingual layout**
+- [ ] **Step 9: Create the base bilingual layout and update the welcome placeholder**
 
 ```blade
 {{-- resources/views/layouts/app.blade.php --}}
@@ -275,18 +273,31 @@ class SetLocale
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'CCS')</title>
-    @vite(['resources/scss/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="bg-ccs-black text-white">
     @yield('content')
 </body>
 </html>
 ```
 
-Update `resources/views/welcome.blade.php` to `@extends('layouts.app')` wrapping its existing content in `@section('content') ... @endsection` so Task 1's smoke test still passes.
+Update `resources/views/welcome.blade.php` to a minimal Tailwind placeholder (no product content, no CCS branding — this is Laravel's stock scaffold page, not a real page in this product):
 
-- [ ] **Step 11: Run tests to verify they pass**
+```blade
+{{-- resources/views/welcome.blade.php --}}
+@extends('layouts.app')
+
+@section('content')
+    <div class="container mx-auto px-4 py-16 text-center">
+        <h1 class="text-2xl font-semibold mb-2">Welcome</h1>
+        <p class="text-gray-400">This page is a placeholder. The application is under construction.</p>
+    </div>
+@endsection
+```
+
+- [ ] **Step 10: Run tests to verify they pass**
 
 Run: `php artisan test --filter=LocaleSwitchTest`
 Expected: PASS (2 passed)
@@ -294,11 +305,11 @@ Expected: PASS (2 passed)
 Run: `php artisan test --filter=SmokeTest`
 Expected: PASS (still 1 passed)
 
-- [ ] **Step 12: Commit**
+- [ ] **Step 11: Commit**
 
 ```bash
 git add resources vite.config.js app/Http/Middleware/SetLocale.php bootstrap/app.php tests/Feature/LocaleSwitchTest.php package.json package-lock.json
-git commit -m "feat: Bootstrap/SCSS asset pipeline and bilingual RTL/LTR base layout"
+git commit -m "feat: Tailwind CSS asset pipeline and bilingual RTL/LTR base layout"
 ```
 
 ### Task 3: Admin authentication (session-based, `users` table)
@@ -2533,16 +2544,16 @@ Route::get('/events/{event}', [LandingPageController::class, 'show'])->name('lan
 
 ```blade
 {{-- resources/views/landing/partials/hero.blade.php --}}
-<section id="hero" class="ccs-hero d-flex flex-column align-items-center justify-content-center text-center text-white" style="min-height: 70vh;">
-    <p class="text-uppercase small">CCS &middot; {{ $event->name_ar }}</p>
-    <h1 class="display-4 fw-bold">{{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}</h1>
-    <p class="fs-5" x-data="{ now: Date.now(), target: new Date('{{ $event->start_date->toDateString() }}').getTime() }"
+<section id="hero" class="ccs-hero flex flex-col items-center justify-center text-center text-white" style="min-height: 70vh;">
+    <p class="uppercase text-sm">CCS &middot; {{ $event->name_ar }}</p>
+    <h1 class="text-5xl font-bold">{{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}</h1>
+    <p class="text-lg" x-data="{ now: Date.now(), target: new Date('{{ $event->start_date->toDateString() }}').getTime() }"
        x-init="setInterval(() => now = Date.now(), 1000)">
         <span x-text="Math.max(0, Math.floor((target - now) / 86400000))"></span>
         {{ __('days to go') }}
     </p>
     <p>{{ app()->getLocale() === 'ar' ? $event->venue_name_ar : $event->venue_name_en }}</p>
-    <a href="#tickets" class="btn btn-danger mt-3">{{ __('Request Your Ticket') }}</a>
+    <a href="#tickets" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Request Your Ticket') }}</a>
 </section>
 ```
 
@@ -2552,7 +2563,7 @@ Route::get('/events/{event}', [LandingPageController::class, 'show'])->name('lan
 {{-- resources/views/landing/partials/about.blade.php --}}
 @php $about = $event->contentFor(\App\Enums\LandingPageSection::About, 'body'); @endphp
 @if($about)
-    <section id="about" class="container py-5">
+    <section id="about" class="container mx-auto px-4 py-5">
         <h2>{{ __('About the Event') }}</h2>
         <p>{{ app()->getLocale() === 'ar' ? $about->value_ar : $about->value_en }}</p>
     </section>
@@ -2659,15 +2670,15 @@ Expected: FAIL (new assertions don't find the text — partials don't exist yet)
 ```blade
 {{-- resources/views/landing/partials/speakers.blade.php --}}
 @if($event->speakers->isNotEmpty())
-    <section id="speakers" class="container py-5">
+    <section id="speakers" class="container mx-auto px-4 py-5">
         <h2>{{ __('Our Speakers') }}</h2>
-        <div class="row">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @foreach($event->speakers as $speaker)
-                <div class="col-md-3 mb-4" x-data="{ open: false }">
-                    <img src="{{ $speaker->photo_path ?? '/images/placeholder-speaker.png' }}" class="img-fluid rounded" alt="">
-                    <h5 class="mt-2">{{ app()->getLocale() === 'ar' ? $speaker->name_ar : $speaker->name_en }}</h5>
-                    <p class="text-muted">{{ app()->getLocale() === 'ar' ? $speaker->title_ar : $speaker->title_en }}</p>
-                    <button type="button" class="btn btn-sm btn-outline-light" @click="open = !open">{{ __('Bio') }}</button>
+                <div class="mb-4" x-data="{ open: false }">
+                    <img src="{{ $speaker->photo_path ?? '/images/placeholder-speaker.png' }}" class="w-full h-auto rounded" alt="">
+                    <h5 class="mt-2 font-semibold">{{ app()->getLocale() === 'ar' ? $speaker->name_ar : $speaker->name_en }}</h5>
+                    <p class="text-gray-400">{{ app()->getLocale() === 'ar' ? $speaker->title_ar : $speaker->title_en }}</p>
+                    <button type="button" class="border border-white text-white px-3 py-1.5 rounded text-sm hover:bg-white hover:text-ccs-black" @click="open = !open">{{ __('Bio') }}</button>
                     <p x-show="open" x-cloak>{{ app()->getLocale() === 'ar' ? $speaker->bio_ar : $speaker->bio_en }}</p>
                 </div>
             @endforeach
@@ -2681,11 +2692,11 @@ Expected: FAIL (new assertions don't find the text — partials don't exist yet)
 ```blade
 {{-- resources/views/landing/partials/partners.blade.php --}}
 @if($event->sponsors->isNotEmpty())
-    <section id="partners" class="container py-5">
+    <section id="partners" class="container mx-auto px-4 py-5">
         <h2>{{ __('Partners') }}</h2>
         @foreach($event->sponsors->groupBy('tier') as $tier => $sponsors)
-            <h6 class="text-uppercase text-muted">{{ $tier }}</h6>
-            <div class="d-flex flex-wrap gap-4 mb-4">
+            <h6 class="uppercase text-gray-400">{{ $tier }}</h6>
+            <div class="flex flex-wrap gap-4 mb-4">
                 @foreach($sponsors as $sponsor)
                     <img src="{{ $sponsor->logo_path ?? '/images/placeholder-logo.png' }}" alt="{{ $sponsor->name_en }}" style="height:48px;">
                 @endforeach
@@ -2700,20 +2711,16 @@ Expected: FAIL (new assertions don't find the text — partials don't exist yet)
 ```blade
 {{-- resources/views/landing/partials/faq.blade.php --}}
 @if($event->faqs->isNotEmpty())
-    <section id="faq" class="container py-5">
+    <section id="faq" class="container mx-auto px-4 py-5">
         <h2>{{ __('FAQ') }}</h2>
-        <div class="accordion" id="faqAccordion">
+        <div class="divide-y divide-gray-700">
             @foreach($event->faqs as $faq)
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ $faq->id }}">
-                            {{ app()->getLocale() === 'ar' ? $faq->question_ar : $faq->question_en }}
-                        </button>
-                    </h2>
-                    <div id="faq{{ $faq->id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            {{ app()->getLocale() === 'ar' ? $faq->answer_ar : $faq->answer_en }}
-                        </div>
+                <div x-data="{ open: false }">
+                    <button type="button" class="w-full text-left py-3 font-semibold" @click="open = !open">
+                        {{ app()->getLocale() === 'ar' ? $faq->question_ar : $faq->question_en }}
+                    </button>
+                    <div x-show="open" x-cloak class="pb-3 text-gray-400">
+                        {{ app()->getLocale() === 'ar' ? $faq->answer_ar : $faq->answer_en }}
                     </div>
                 </div>
             @endforeach
@@ -2728,7 +2735,7 @@ Expected: FAIL (new assertions don't find the text — partials don't exist yet)
 {{-- resources/views/landing/partials/location.blade.php --}}
 @php $intro = $event->contentFor(\App\Enums\LandingPageSection::Location, 'intro'); @endphp
 @if($intro || $event->venue_address_en)
-    <section id="location" class="container py-5">
+    <section id="location" class="container mx-auto px-4 py-5">
         <h2>{{ __('Location') }}</h2>
         @if($intro)
             <p>{{ app()->getLocale() === 'ar' ? $intro->value_ar : $intro->value_en }}</p>
@@ -2900,16 +2907,16 @@ Route::get('/events/{event}/workshops/{workshop}', [WorkshopController::class, '
 @section('title', __('Workshops'))
 
 @section('content')
-    <div class="container py-5">
+    <div class="container mx-auto px-4 py-5">
         <h1>{{ __('Workshops') }}</h1>
-        <div class="row">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach($workshops as $workshop)
-                <div class="col-md-4 mb-4">
-                    <div class="card bg-dark text-white h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ app()->getLocale() === 'ar' ? $workshop->name_ar : $workshop->name_en }}</h5>
-                            <p class="card-text">{{ Str::limit(app()->getLocale() === 'ar' ? $workshop->description_ar : $workshop->description_en, 100) }}</p>
-                            <a href="{{ route('workshops.show', [$event, $workshop]) }}" class="btn btn-outline-light btn-sm">{{ __('Details') }}</a>
+                <div class="mb-4">
+                    <div class="bg-gray-900 rounded-lg shadow overflow-hidden text-white h-full">
+                        <div class="p-4">
+                            <h5 class="font-semibold">{{ app()->getLocale() === 'ar' ? $workshop->name_ar : $workshop->name_en }}</h5>
+                            <p class="text-gray-400 text-sm">{{ Str::limit(app()->getLocale() === 'ar' ? $workshop->description_ar : $workshop->description_en, 100) }}</p>
+                            <a href="{{ route('workshops.show', [$event, $workshop]) }}" class="border border-white text-white px-3 py-1.5 rounded text-sm hover:bg-white hover:text-ccs-black">{{ __('Details') }}</a>
                         </div>
                     </div>
                 </div>
@@ -2928,7 +2935,7 @@ Route::get('/events/{event}/workshops/{workshop}', [WorkshopController::class, '
 @section('title', app()->getLocale() === 'ar' ? $workshop->name_ar : $workshop->name_en)
 
 @section('content')
-    <div class="container py-5">
+    <div class="container mx-auto px-4 py-5">
         <a href="{{ route('workshops.index', $event) }}">&larr; {{ __('All Workshops') }}</a>
         <h1>{{ app()->getLocale() === 'ar' ? $workshop->name_ar : $workshop->name_en }}</h1>
         <p>{{ app()->getLocale() === 'ar' ? $workshop->description_ar : $workshop->description_en }}</p>
@@ -3046,16 +3053,16 @@ Route::get('/events/{event}/agenda', [AgendaController::class, 'show'])->name('a
 @section('title', __('Agenda'))
 
 @section('content')
-    <div class="container py-5">
+    <div class="container mx-auto px-4 py-5">
         <h1>{{ __('Agenda') }}</h1>
         @foreach($itemsByDay as $day => $items)
             <h4 class="mt-4">{{ \Illuminate\Support\Carbon::parse($day)->translatedFormat('l, F j') }}</h4>
-            <ul class="list-group mb-4">
+            <ul class="divide-y divide-gray-700 mb-4">
                 @foreach($items as $item)
-                    <li class="list-group-item bg-dark text-white d-flex justify-content-between">
+                    <li class="py-3 flex justify-between text-white">
                         <span>{{ $item->start_time->format('H:i') }}–{{ $item->end_time->format('H:i') }}</span>
                         <span>{{ app()->getLocale() === 'ar' ? $item->title_ar : $item->title_en }}</span>
-                        <span class="badge bg-secondary">{{ $item->type->value }}</span>
+                        <span class="inline-block px-2 py-1 text-xs rounded bg-gray-700 text-white">{{ $item->type->value }}</span>
                     </li>
                 @endforeach
             </ul>
@@ -3181,12 +3188,12 @@ Route::get('/events/{event}/request', [TicketRequestController::class, 'create']
 @section('title', __('Request a Ticket'))
 
 @section('content')
-    <div class="container py-5">
+    <div class="container mx-auto px-4 py-5">
         <h1>{{ __('Request Your Ticket') }}</h1>
         {{-- Submission handling is a future spec; this form has no action wired up yet. --}}
         <form>
             <label for="ticket_type_id">{{ __('Ticket Type') }}</label>
-            <select id="ticket_type_id" name="ticket_type_id" class="form-select">
+            <select id="ticket_type_id" name="ticket_type_id" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 @foreach($ticketTypes as $ticketType)
                     <option value="{{ $ticketType->id }}" @selected($ticketType->id === $selectedTicketTypeId)>
                         {{ app()->getLocale() === 'ar' ? $ticketType->name_ar : $ticketType->name_en }} — {{ $ticketType->price }} {{ $ticketType->currency }}
@@ -3301,12 +3308,12 @@ Route::get('/events/{event}/awards', [AwardsController::class, 'show'])->name('a
 @section('title', __('Awards'))
 
 @section('content')
-    <div class="container py-5 text-center">
+    <div class="container mx-auto px-4 py-5 text-center">
         <h1>{{ __('Awards') }}</h1>
         @if($blurb)
             <p>{{ app()->getLocale() === 'ar' ? $blurb->value_ar : $blurb->value_en }}</p>
         @endif
-        <p class="text-muted">{{ __('Voting details coming soon.') }}</p>
+        <p class="text-gray-400">{{ __('Voting details coming soon.') }}</p>
     </div>
 @endsection
 ```
@@ -3394,20 +3401,20 @@ Expected: FAIL (new partials don't exist yet, so the links aren't on the page)
 ```blade
 {{-- resources/views/landing/partials/workshops-teaser.blade.php --}}
 @if($event->workshops->isNotEmpty())
-    <section id="workshops" class="container py-5">
+    <section id="workshops" class="container mx-auto px-4 py-5">
         <h2>{{ __('Workshops') }}</h2>
-        <div class="row">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach($event->workshops->take(3) as $workshop)
-                <div class="col-md-4 mb-3">
-                    <div class="card bg-dark text-white h-100">
-                        <div class="card-body">
+                <div class="mb-3">
+                    <div class="bg-gray-900 rounded-lg shadow overflow-hidden text-white h-full">
+                        <div class="p-4">
                             <h5>{{ app()->getLocale() === 'ar' ? $workshop->name_ar : $workshop->name_en }}</h5>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
-        <a href="{{ route('workshops.index', $event) }}" class="btn btn-outline-light">{{ __('See All Workshops') }}</a>
+        <a href="{{ route('workshops.index', $event) }}" class="border border-white text-white px-4 py-2 rounded hover:bg-white hover:text-ccs-black">{{ __('See All Workshops') }}</a>
     </section>
 @endif
 ```
@@ -3417,9 +3424,9 @@ Expected: FAIL (new partials don't exist yet, so the links aren't on the page)
 ```blade
 {{-- resources/views/landing/partials/agenda-teaser.blade.php --}}
 @if($event->agendaItems->isNotEmpty())
-    <section id="agenda-teaser" class="container py-5">
+    <section id="agenda-teaser" class="container mx-auto px-4 py-5">
         <h2>{{ __('Agenda') }}</h2>
-        <a href="{{ route('agenda.show', $event) }}" class="btn btn-outline-light">{{ __('View Full Agenda') }}</a>
+        <a href="{{ route('agenda.show', $event) }}" class="border border-white text-white px-4 py-2 rounded hover:bg-white hover:text-ccs-black">{{ __('View Full Agenda') }}</a>
     </section>
 @endif
 ```
@@ -3429,16 +3436,16 @@ Expected: FAIL (new partials don't exist yet, so the links aren't on the page)
 ```blade
 {{-- resources/views/landing/partials/tickets.blade.php --}}
 @if($event->ticketTypes->isNotEmpty())
-    <section id="tickets" class="container py-5">
+    <section id="tickets" class="container mx-auto px-4 py-5">
         <h2>{{ __('Tickets') }}</h2>
-        <div class="row">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             @foreach($event->ticketTypes->where('is_active', true) as $ticketType)
-                <div class="col-md-3 mb-4">
-                    <div class="card bg-dark text-white h-100">
-                        <div class="card-body">
+                <div class="mb-4">
+                    <div class="bg-gray-900 rounded-lg shadow overflow-hidden text-white h-full">
+                        <div class="p-4">
                             <h5>{{ app()->getLocale() === 'ar' ? $ticketType->name_ar : $ticketType->name_en }}</h5>
                             <p>{{ $ticketType->price }} {{ $ticketType->currency }}</p>
-                            <a href="{{ route('ticket-requests.create', $event) }}?type={{ $ticketType->id }}" class="btn btn-danger btn-sm">
+                            <a href="{{ route('ticket-requests.create', $event) }}?type={{ $ticketType->id }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-3 py-1.5 rounded text-sm">
                                 {{ __('Request This Ticket') }}
                             </a>
                         </div>
@@ -3454,13 +3461,13 @@ Expected: FAIL (new partials don't exist yet, so the links aren't on the page)
 
 ```blade
 {{-- resources/views/landing/partials/awards-teaser.blade.php --}}
-<section id="awards" class="container py-5">
+<section id="awards" class="container mx-auto px-4 py-5">
     <h2>{{ __('Awards') }}</h2>
     @php $blurb = $event->contentFor(\App\Enums\LandingPageSection::AwardsTeaser, 'blurb'); @endphp
     @if($blurb)
         <p>{{ app()->getLocale() === 'ar' ? $blurb->value_ar : $blurb->value_en }}</p>
     @endif
-    <a href="{{ route('awards.show', $event) }}" class="btn btn-outline-light">{{ __('Learn More') }}</a>
+    <a href="{{ route('awards.show', $event) }}" class="border border-white text-white px-4 py-2 rounded hover:bg-white hover:text-ccs-black">{{ __('Learn More') }}</a>
 </section>
 ```
 
@@ -3730,19 +3737,19 @@ Route::middleware('auth')->group(function () {
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Events') }}</h1>
-        <a href="{{ route('admin.events.create') }}" class="btn btn-primary mb-3">{{ __('New Event') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Name') }}</th><th>{{ __('Status') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.create') }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New Event') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Name') }}</th><th class="py-2 px-3">{{ __('Status') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($events as $event)
-                    <tr>
-                        <td>{{ $event->name_en }}</td>
-                        <td>{{ $event->status->value }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $event->name_en }}</td>
+                        <td class="py-2 px-3">{{ $event->status->value }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.edit', $event) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.destroy', $event) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.destroy', $event) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -3762,85 +3769,85 @@ Route::middleware('auth')->group(function () {
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $event->exists ? __('Edit Event') : __('New Event') }}</h1>
         <form method="POST" action="{{ $event->exists ? route('admin.events.update', $event) : route('admin.events.store') }}">
             @csrf
             @if($event->exists) @method('PUT') @endif
 
             <label>{{ __('Slug') }}</label>
-            <input name="slug" value="{{ old('slug', $event->slug) }}" class="form-control">
-            @error('slug') <p class="text-danger">{{ $message }}</p> @enderror
+            <input name="slug" value="{{ old('slug', $event->slug) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+            @error('slug') <p class="text-red-500">{{ $message }}</p> @enderror
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Name (Arabic)') }}</label>
-                    <input name="name_ar" value="{{ old('name_ar', $event->name_ar) }}" class="form-control" dir="rtl">
-                    @error('name_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_ar" value="{{ old('name_ar', $event->name_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('name_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Name (English)') }}</label>
-                    <input name="name_en" value="{{ old('name_en', $event->name_en) }}" class="form-control">
-                    @error('name_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_en" value="{{ old('name_en', $event->name_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('name_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Tagline (Arabic)') }}</label>
-                    <input name="tagline_ar" value="{{ old('tagline_ar', $event->tagline_ar) }}" class="form-control" dir="rtl">
+                    <input name="tagline_ar" value="{{ old('tagline_ar', $event->tagline_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Tagline (English)') }}</label>
-                    <input name="tagline_en" value="{{ old('tagline_en', $event->tagline_en) }}" class="form-control">
+                    <input name="tagline_en" value="{{ old('tagline_en', $event->tagline_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Start Date') }}</label>
-                    <input type="date" name="start_date" value="{{ old('start_date', optional($event->start_date)->toDateString()) }}" class="form-control">
-                    @error('start_date') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input type="date" name="start_date" value="{{ old('start_date', optional($event->start_date)->toDateString()) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('start_date') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('End Date') }}</label>
-                    <input type="date" name="end_date" value="{{ old('end_date', optional($event->end_date)->toDateString()) }}" class="form-control">
-                    @error('end_date') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input type="date" name="end_date" value="{{ old('end_date', optional($event->end_date)->toDateString()) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('end_date') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Venue Name (Arabic)') }}</label>
-                    <input name="venue_name_ar" value="{{ old('venue_name_ar', $event->venue_name_ar) }}" class="form-control" dir="rtl">
+                    <input name="venue_name_ar" value="{{ old('venue_name_ar', $event->venue_name_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Venue Name (English)') }}</label>
-                    <input name="venue_name_en" value="{{ old('venue_name_en', $event->venue_name_en) }}" class="form-control">
+                    <input name="venue_name_en" value="{{ old('venue_name_en', $event->venue_name_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Venue Address (Arabic)') }}</label>
-                    <input name="venue_address_ar" value="{{ old('venue_address_ar', $event->venue_address_ar) }}" class="form-control" dir="rtl">
+                    <input name="venue_address_ar" value="{{ old('venue_address_ar', $event->venue_address_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Venue Address (English)') }}</label>
-                    <input name="venue_address_en" value="{{ old('venue_address_en', $event->venue_address_en) }}" class="form-control">
+                    <input name="venue_address_en" value="{{ old('venue_address_en', $event->venue_address_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 </div>
             </div>
 
             <label>{{ __('Map Embed URL') }}</label>
-            <input name="map_embed_url" value="{{ old('map_embed_url', $event->map_embed_url) }}" class="form-control">
+            <input name="map_embed_url" value="{{ old('map_embed_url', $event->map_embed_url) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
             <label>{{ __('Status') }}</label>
-            <select name="status" class="form-select">
+            <select name="status" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 <option value="draft" @selected(old('status', $event->status?->value) === 'draft')>{{ __('Draft') }}</option>
                 <option value="published" @selected(old('status', $event->status?->value) === 'published')>{{ __('Published') }}</option>
             </select>
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -4081,18 +4088,18 @@ Route::resource('events.speakers', SpeakerController::class)->except('show');
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Speakers') }} — {{ $event->name_en }}</h1>
-        <a href="{{ route('admin.events.speakers.create', $event) }}" class="btn btn-primary mb-3">{{ __('New Speaker') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Name') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.speakers.create', $event) }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New Speaker') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Name') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($speakers as $speaker)
-                    <tr>
-                        <td>{{ $speaker->name_en }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $speaker->name_en }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.speakers.edit', [$event, $speaker]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.speakers.destroy', [$event, $speaker]) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.speakers.destroy', [$event, $speaker]) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -4112,51 +4119,51 @@ Route::resource('events.speakers', SpeakerController::class)->except('show');
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $speaker->exists ? __('Edit Speaker') : __('New Speaker') }}</h1>
         <form method="POST" action="{{ $speaker->exists ? route('admin.events.speakers.update', [$event, $speaker]) : route('admin.events.speakers.store', $event) }}">
             @csrf
             @if($speaker->exists) @method('PUT') @endif
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Name (Arabic)') }}</label>
-                    <input name="name_ar" value="{{ old('name_ar', $speaker->name_ar) }}" class="form-control" dir="rtl">
-                    @error('name_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_ar" value="{{ old('name_ar', $speaker->name_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('name_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Name (English)') }}</label>
-                    <input name="name_en" value="{{ old('name_en', $speaker->name_en) }}" class="form-control">
-                    @error('name_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_en" value="{{ old('name_en', $speaker->name_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('name_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Title (Arabic)') }}</label>
-                    <input name="title_ar" value="{{ old('title_ar', $speaker->title_ar) }}" class="form-control" dir="rtl">
+                    <input name="title_ar" value="{{ old('title_ar', $speaker->title_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Title (English)') }}</label>
-                    <input name="title_en" value="{{ old('title_en', $speaker->title_en) }}" class="form-control">
+                    <input name="title_en" value="{{ old('title_en', $speaker->title_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Bio (Arabic)') }}</label>
-                    <textarea name="bio_ar" class="form-control" dir="rtl">{{ old('bio_ar', $speaker->bio_ar) }}</textarea>
+                    <textarea name="bio_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">{{ old('bio_ar', $speaker->bio_ar) }}</textarea>
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Bio (English)') }}</label>
-                    <textarea name="bio_en" class="form-control">{{ old('bio_en', $speaker->bio_en) }}</textarea>
+                    <textarea name="bio_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">{{ old('bio_en', $speaker->bio_en) }}</textarea>
                 </div>
             </div>
 
             <label>{{ __('Sort Order') }}</label>
-            <input type="number" name="sort_order" value="{{ old('sort_order', $speaker->sort_order ?? 0) }}" class="form-control">
+            <input type="number" name="sort_order" value="{{ old('sort_order', $speaker->sort_order ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -4383,19 +4390,19 @@ Route::resource('events.sponsors', SponsorController::class)->except('show');
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Sponsors') }} — {{ $event->name_en }}</h1>
-        <a href="{{ route('admin.events.sponsors.create', $event) }}" class="btn btn-primary mb-3">{{ __('New Sponsor') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Name') }}</th><th>{{ __('Tier') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.sponsors.create', $event) }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New Sponsor') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Name') }}</th><th class="py-2 px-3">{{ __('Tier') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($sponsors as $sponsor)
-                    <tr>
-                        <td>{{ $sponsor->name_en }}</td>
-                        <td>{{ $sponsor->tier }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $sponsor->name_en }}</td>
+                        <td class="py-2 px-3">{{ $sponsor->tier }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.sponsors.edit', [$event, $sponsor]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.sponsors.destroy', [$event, $sponsor]) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.sponsors.destroy', [$event, $sponsor]) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -4415,40 +4422,40 @@ Route::resource('events.sponsors', SponsorController::class)->except('show');
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $sponsor->exists ? __('Edit Sponsor') : __('New Sponsor') }}</h1>
         <form method="POST" action="{{ $sponsor->exists ? route('admin.events.sponsors.update', [$event, $sponsor]) : route('admin.events.sponsors.store', $event) }}">
             @csrf
             @if($sponsor->exists) @method('PUT') @endif
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Name (Arabic)') }}</label>
-                    <input name="name_ar" value="{{ old('name_ar', $sponsor->name_ar) }}" class="form-control" dir="rtl">
-                    @error('name_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_ar" value="{{ old('name_ar', $sponsor->name_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('name_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Name (English)') }}</label>
-                    <input name="name_en" value="{{ old('name_en', $sponsor->name_en) }}" class="form-control">
-                    @error('name_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_en" value="{{ old('name_en', $sponsor->name_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('name_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <label>{{ __('Tier') }}</label>
-            <select name="tier" class="form-select">
+            <select name="tier" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 @foreach(['platinum', 'gold', 'silver', 'bronze'] as $tier)
                     <option value="{{ $tier }}" @selected(old('tier', $sponsor->tier) === $tier)>{{ ucfirst($tier) }}</option>
                 @endforeach
             </select>
-            @error('tier') <p class="text-danger">{{ $message }}</p> @enderror
+            @error('tier') <p class="text-red-500">{{ $message }}</p> @enderror
 
             <label>{{ __('Website URL') }}</label>
-            <input name="website_url" value="{{ old('website_url', $sponsor->website_url) }}" class="form-control">
+            <input name="website_url" value="{{ old('website_url', $sponsor->website_url) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
             <label>{{ __('Sort Order') }}</label>
-            <input type="number" name="sort_order" value="{{ old('sort_order', $sponsor->sort_order ?? 0) }}" class="form-control">
+            <input type="number" name="sort_order" value="{{ old('sort_order', $sponsor->sort_order ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -4691,20 +4698,20 @@ Route::resource('events.ticket-types', TicketTypeController::class)
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Ticket Types') }} — {{ $event->name_en }}</h1>
-        <a href="{{ route('admin.events.ticket-types.create', $event) }}" class="btn btn-primary mb-3">{{ __('New Ticket Type') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Name') }}</th><th>{{ __('Price') }}</th><th>{{ __('Workshop Slots') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.ticket-types.create', $event) }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New Ticket Type') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Name') }}</th><th class="py-2 px-3">{{ __('Price') }}</th><th class="py-2 px-3">{{ __('Workshop Slots') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($ticketTypes as $ticketType)
-                    <tr>
-                        <td>{{ $ticketType->name_en }}</td>
-                        <td>{{ $ticketType->price }} {{ $ticketType->currency }}</td>
-                        <td>{{ $ticketType->workshop_slot_count ?? __('Unlimited') }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $ticketType->name_en }}</td>
+                        <td class="py-2 px-3">{{ $ticketType->price }} {{ $ticketType->currency }}</td>
+                        <td class="py-2 px-3">{{ $ticketType->workshop_slot_count ?? __('Unlimited') }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.ticket-types.edit', [$event, $ticketType]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.ticket-types.destroy', [$event, $ticketType]) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.ticket-types.destroy', [$event, $ticketType]) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -4724,61 +4731,61 @@ Route::resource('events.ticket-types', TicketTypeController::class)
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $ticketType->exists ? __('Edit Ticket Type') : __('New Ticket Type') }}</h1>
         <form method="POST" action="{{ $ticketType->exists ? route('admin.events.ticket-types.update', [$event, $ticketType]) : route('admin.events.ticket-types.store', $event) }}">
             @csrf
             @if($ticketType->exists) @method('PUT') @endif
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Name (Arabic)') }}</label>
-                    <input name="name_ar" value="{{ old('name_ar', $ticketType->name_ar) }}" class="form-control" dir="rtl">
-                    @error('name_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_ar" value="{{ old('name_ar', $ticketType->name_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('name_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Name (English)') }}</label>
-                    <input name="name_en" value="{{ old('name_en', $ticketType->name_en) }}" class="form-control">
-                    @error('name_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_en" value="{{ old('name_en', $ticketType->name_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('name_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Description (Arabic)') }}</label>
-                    <textarea name="description_ar" class="form-control" dir="rtl">{{ old('description_ar', $ticketType->description_ar) }}</textarea>
+                    <textarea name="description_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">{{ old('description_ar', $ticketType->description_ar) }}</textarea>
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Description (English)') }}</label>
-                    <textarea name="description_en" class="form-control">{{ old('description_en', $ticketType->description_en) }}</textarea>
+                    <textarea name="description_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">{{ old('description_en', $ticketType->description_en) }}</textarea>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
                     <label>{{ __('Price') }}</label>
-                    <input type="number" name="price" value="{{ old('price', $ticketType->price) }}" class="form-control">
-                    @error('price') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input type="number" name="price" value="{{ old('price', $ticketType->price) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('price') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Currency') }}</label>
-                    <input name="currency" value="{{ old('currency', $ticketType->currency ?? 'SAR') }}" class="form-control" maxlength="3">
+                    <input name="currency" value="{{ old('currency', $ticketType->currency ?? 'SAR') }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" maxlength="3">
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Workshop Slots (blank = unlimited)') }}</label>
-                    <input type="number" name="workshop_slot_count" value="{{ old('workshop_slot_count', $ticketType->workshop_slot_count) }}" class="form-control">
+                    <input type="number" name="workshop_slot_count" value="{{ old('workshop_slot_count', $ticketType->workshop_slot_count) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 </div>
             </div>
 
-            <div class="form-check">
-                <input type="checkbox" name="is_active" value="1" class="form-check-input" id="is_active" @checked(old('is_active', $ticketType->is_active ?? true))>
-                <label class="form-check-label" for="is_active">{{ __('Active') }}</label>
+            <div class="flex items-center gap-2">
+                <input type="checkbox" name="is_active" value="1" class="rounded" id="is_active" @checked(old('is_active', $ticketType->is_active ?? true))>
+                <label for="is_active">{{ __('Active') }}</label>
             </div>
 
             <label>{{ __('Sort Order') }}</label>
-            <input type="number" name="sort_order" value="{{ old('sort_order', $ticketType->sort_order ?? 0) }}" class="form-control">
+            <input type="number" name="sort_order" value="{{ old('sort_order', $ticketType->sort_order ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -5006,19 +5013,19 @@ Route::resource('events.workshops', AdminWorkshopController::class)->except('sho
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Workshops') }} — {{ $event->name_en }}</h1>
-        <a href="{{ route('admin.events.workshops.create', $event) }}" class="btn btn-primary mb-3">{{ __('New Workshop') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Name') }}</th><th>{{ __('Capacity') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.workshops.create', $event) }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New Workshop') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Name') }}</th><th class="py-2 px-3">{{ __('Capacity') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($workshops as $workshop)
-                    <tr>
-                        <td>{{ $workshop->name_en }}</td>
-                        <td>{{ $workshop->capacity }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $workshop->name_en }}</td>
+                        <td class="py-2 px-3">{{ $workshop->capacity }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.workshops.edit', [$event, $workshop]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.workshops.destroy', [$event, $workshop]) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.workshops.destroy', [$event, $workshop]) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -5038,42 +5045,42 @@ Route::resource('events.workshops', AdminWorkshopController::class)->except('sho
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $workshop->exists ? __('Edit Workshop') : __('New Workshop') }}</h1>
         <form method="POST" action="{{ $workshop->exists ? route('admin.events.workshops.update', [$event, $workshop]) : route('admin.events.workshops.store', $event) }}">
             @csrf
             @if($workshop->exists) @method('PUT') @endif
 
             <label>{{ __('Slug') }}</label>
-            <input name="slug" value="{{ old('slug', $workshop->slug) }}" class="form-control">
-            @error('slug') <p class="text-danger">{{ $message }}</p> @enderror
+            <input name="slug" value="{{ old('slug', $workshop->slug) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+            @error('slug') <p class="text-red-500">{{ $message }}</p> @enderror
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Name (Arabic)') }}</label>
-                    <input name="name_ar" value="{{ old('name_ar', $workshop->name_ar) }}" class="form-control" dir="rtl">
-                    @error('name_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_ar" value="{{ old('name_ar', $workshop->name_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('name_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Name (English)') }}</label>
-                    <input name="name_en" value="{{ old('name_en', $workshop->name_en) }}" class="form-control">
-                    @error('name_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="name_en" value="{{ old('name_en', $workshop->name_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('name_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Description (Arabic)') }}</label>
-                    <textarea name="description_ar" class="form-control" dir="rtl">{{ old('description_ar', $workshop->description_ar) }}</textarea>
+                    <textarea name="description_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">{{ old('description_ar', $workshop->description_ar) }}</textarea>
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Description (English)') }}</label>
-                    <textarea name="description_en" class="form-control">{{ old('description_en', $workshop->description_en) }}</textarea>
+                    <textarea name="description_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">{{ old('description_en', $workshop->description_en) }}</textarea>
                 </div>
             </div>
 
             <label>{{ __('Speaker') }}</label>
-            <select name="speaker_id" class="form-select">
+            <select name="speaker_id" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 <option value="">{{ __('None') }}</option>
                 @foreach($speakers as $speaker)
                     <option value="{{ $speaker->id }}" @selected(old('speaker_id', $workshop->speaker_id) === $speaker->id)>{{ $speaker->name_en }}</option>
@@ -5081,13 +5088,13 @@ Route::resource('events.workshops', AdminWorkshopController::class)->except('sho
             </select>
 
             <label>{{ __('Capacity') }}</label>
-            <input type="number" name="capacity" value="{{ old('capacity', $workshop->capacity ?? 0) }}" class="form-control">
-            @error('capacity') <p class="text-danger">{{ $message }}</p> @enderror
+            <input type="number" name="capacity" value="{{ old('capacity', $workshop->capacity ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+            @error('capacity') <p class="text-red-500">{{ $message }}</p> @enderror
 
             <label>{{ __('Sort Order') }}</label>
-            <input type="number" name="sort_order" value="{{ old('sort_order', $workshop->sort_order ?? 0) }}" class="form-control">
+            <input type="number" name="sort_order" value="{{ old('sort_order', $workshop->sort_order ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -5320,20 +5327,20 @@ Route::resource('events.agenda-items', AgendaItemController::class)
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Agenda Items') }} — {{ $event->name_en }}</h1>
-        <a href="{{ route('admin.events.agenda-items.create', $event) }}" class="btn btn-primary mb-3">{{ __('New Agenda Item') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Day') }}</th><th>{{ __('Time') }}</th><th>{{ __('Title') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.agenda-items.create', $event) }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New Agenda Item') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Day') }}</th><th class="py-2 px-3">{{ __('Time') }}</th><th class="py-2 px-3">{{ __('Title') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($items as $item)
-                    <tr>
-                        <td>{{ $item->day_date->toDateString() }}</td>
-                        <td>{{ $item->start_time->format('H:i') }}–{{ $item->end_time->format('H:i') }}</td>
-                        <td>{{ $item->title_en }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $item->day_date->toDateString() }}</td>
+                        <td class="py-2 px-3">{{ $item->start_time->format('H:i') }}–{{ $item->end_time->format('H:i') }}</td>
+                        <td class="py-2 px-3">{{ $item->title_en }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.agenda-items.edit', [$event, $item]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.agenda-items.destroy', [$event, $item]) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.agenda-items.destroy', [$event, $item]) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -5353,52 +5360,52 @@ Route::resource('events.agenda-items', AgendaItemController::class)
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $item->exists ? __('Edit Agenda Item') : __('New Agenda Item') }}</h1>
         <form method="POST" action="{{ $item->exists ? route('admin.events.agenda-items.update', [$event, $item]) : route('admin.events.agenda-items.store', $event) }}">
             @csrf
             @if($item->exists) @method('PUT') @endif
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
                     <label>{{ __('Day') }}</label>
-                    <input type="date" name="day_date" value="{{ old('day_date', optional($item->day_date)->toDateString()) }}" class="form-control">
-                    @error('day_date') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input type="date" name="day_date" value="{{ old('day_date', optional($item->day_date)->toDateString()) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('day_date') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Start Time') }}</label>
-                    <input type="time" name="start_time" value="{{ old('start_time', optional($item->start_time)->format('H:i')) }}" class="form-control">
-                    @error('start_time') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input type="time" name="start_time" value="{{ old('start_time', optional($item->start_time)->format('H:i')) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('start_time') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('End Time') }}</label>
-                    <input type="time" name="end_time" value="{{ old('end_time', optional($item->end_time)->format('H:i')) }}" class="form-control">
-                    @error('end_time') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input type="time" name="end_time" value="{{ old('end_time', optional($item->end_time)->format('H:i')) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('end_time') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Title (Arabic)') }}</label>
-                    <input name="title_ar" value="{{ old('title_ar', $item->title_ar) }}" class="form-control" dir="rtl">
-                    @error('title_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="title_ar" value="{{ old('title_ar', $item->title_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('title_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Title (English)') }}</label>
-                    <input name="title_en" value="{{ old('title_en', $item->title_en) }}" class="form-control">
-                    @error('title_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="title_en" value="{{ old('title_en', $item->title_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('title_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <label>{{ __('Type') }}</label>
-            <select name="type" class="form-select">
+            <select name="type" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 @foreach($types as $type)
                     <option value="{{ $type->value }}" @selected(old('type', $item->type?->value) === $type->value)>{{ ucfirst($type->value) }}</option>
                 @endforeach
             </select>
 
             <label>{{ __('Speaker') }}</label>
-            <select name="speaker_id" class="form-select">
+            <select name="speaker_id" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 <option value="">{{ __('None') }}</option>
                 @foreach($speakers as $speaker)
                     <option value="{{ $speaker->id }}" @selected(old('speaker_id', $item->speaker_id) === $speaker->id)>{{ $speaker->name_en }}</option>
@@ -5406,7 +5413,7 @@ Route::resource('events.agenda-items', AgendaItemController::class)
             </select>
 
             <label>{{ __('Workshop') }}</label>
-            <select name="workshop_id" class="form-select">
+            <select name="workshop_id" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
                 <option value="">{{ __('None') }}</option>
                 @foreach($workshops as $workshop)
                     <option value="{{ $workshop->id }}" @selected(old('workshop_id', $item->workshop_id) === $workshop->id)>{{ $workshop->name_en }}</option>
@@ -5414,9 +5421,9 @@ Route::resource('events.agenda-items', AgendaItemController::class)
             </select>
 
             <label>{{ __('Sort Order') }}</label>
-            <input type="number" name="sort_order" value="{{ old('sort_order', $item->sort_order ?? 0) }}" class="form-control">
+            <input type="number" name="sort_order" value="{{ old('sort_order', $item->sort_order ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -5630,18 +5637,18 @@ Route::resource('events.faqs', FaqController::class)->except('show');
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('FAQs') }} — {{ $event->name_en }}</h1>
-        <a href="{{ route('admin.events.faqs.create', $event) }}" class="btn btn-primary mb-3">{{ __('New FAQ') }}</a>
-        <table class="table table-dark">
-            <thead><tr><th>{{ __('Question') }}</th><th></th></tr></thead>
+        <a href="{{ route('admin.events.faqs.create', $event) }}" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mb-3">{{ __('New FAQ') }}</a>
+        <table class="w-full text-left text-white">
+            <thead><tr class="border-b border-gray-700"><th class="py-2 px-3">{{ __('Question') }}</th><th class="py-2 px-3"></th></tr></thead>
             <tbody>
                 @foreach($faqs as $faq)
-                    <tr>
-                        <td>{{ $faq->question_en }}</td>
-                        <td>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">{{ $faq->question_en }}</td>
+                        <td class="py-2 px-3">
                             <a href="{{ route('admin.events.faqs.edit', [$event, $faq]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.faqs.destroy', [$event, $faq]) }}" class="d-inline">
+                            <form method="POST" action="{{ route('admin.events.faqs.destroy', [$event, $faq]) }}" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>
@@ -5661,42 +5668,42 @@ Route::resource('events.faqs', FaqController::class)->except('show');
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ $faq->exists ? __('Edit FAQ') : __('New FAQ') }}</h1>
         <form method="POST" action="{{ $faq->exists ? route('admin.events.faqs.update', [$event, $faq]) : route('admin.events.faqs.store', $event) }}">
             @csrf
             @if($faq->exists) @method('PUT') @endif
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Question (Arabic)') }}</label>
-                    <input name="question_ar" value="{{ old('question_ar', $faq->question_ar) }}" class="form-control" dir="rtl">
-                    @error('question_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="question_ar" value="{{ old('question_ar', $faq->question_ar) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">
+                    @error('question_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Question (English)') }}</label>
-                    <input name="question_en" value="{{ old('question_en', $faq->question_en) }}" class="form-control">
-                    @error('question_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <input name="question_en" value="{{ old('question_en', $faq->question_en) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @error('question_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label>{{ __('Answer (Arabic)') }}</label>
-                    <textarea name="answer_ar" class="form-control" dir="rtl">{{ old('answer_ar', $faq->answer_ar) }}</textarea>
-                    @error('answer_ar') <p class="text-danger">{{ $message }}</p> @enderror
+                    <textarea name="answer_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl">{{ old('answer_ar', $faq->answer_ar) }}</textarea>
+                    @error('answer_ar') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
-                <div class="col">
+                <div>
                     <label>{{ __('Answer (English)') }}</label>
-                    <textarea name="answer_en" class="form-control">{{ old('answer_en', $faq->answer_en) }}</textarea>
-                    @error('answer_en') <p class="text-danger">{{ $message }}</p> @enderror
+                    <textarea name="answer_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">{{ old('answer_en', $faq->answer_en) }}</textarea>
+                    @error('answer_en') <p class="text-red-500">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <label>{{ __('Sort Order') }}</label>
-            <input type="number" name="sort_order" value="{{ old('sort_order', $faq->sort_order ?? 0) }}" class="form-control">
+            <input type="number" name="sort_order" value="{{ old('sort_order', $faq->sort_order ?? 0) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
 
-            <button type="submit" class="btn btn-primary mt-3">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
@@ -5916,37 +5923,37 @@ Route::put('events/{event}/content', [LandingPageContentController::class, 'upda
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container mx-auto px-4 py-4">
         <h1>{{ __('Landing Page Content') }} — {{ $event->name_en }}</h1>
         <form method="POST" action="{{ route('admin.events.content.update', $event) }}">
             @csrf
             @method('PUT')
 
             <h5 class="mt-4">{{ __('Hero Headline') }}</h5>
-            <div class="row">
-                <div class="col"><input name="hero_headline_ar" value="{{ old('hero_headline_ar', $values['hero_headline_ar']) }}" class="form-control" dir="rtl" placeholder="{{ __('Arabic') }}"></div>
-                <div class="col"><input name="hero_headline_en" value="{{ old('hero_headline_en', $values['hero_headline_en']) }}" class="form-control" placeholder="{{ __('English') }}"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><input name="hero_headline_ar" value="{{ old('hero_headline_ar', $values['hero_headline_ar']) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl" placeholder="{{ __('Arabic') }}"></div>
+                <div><input name="hero_headline_en" value="{{ old('hero_headline_en', $values['hero_headline_en']) }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" placeholder="{{ __('English') }}"></div>
             </div>
 
             <h5 class="mt-4">{{ __('About Body') }}</h5>
-            <div class="row">
-                <div class="col"><textarea name="about_body_ar" class="form-control" dir="rtl" placeholder="{{ __('Arabic') }}">{{ old('about_body_ar', $values['about_body_ar']) }}</textarea></div>
-                <div class="col"><textarea name="about_body_en" class="form-control" placeholder="{{ __('English') }}">{{ old('about_body_en', $values['about_body_en']) }}</textarea></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><textarea name="about_body_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl" placeholder="{{ __('Arabic') }}">{{ old('about_body_ar', $values['about_body_ar']) }}</textarea></div>
+                <div><textarea name="about_body_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" placeholder="{{ __('English') }}">{{ old('about_body_en', $values['about_body_en']) }}</textarea></div>
             </div>
 
             <h5 class="mt-4">{{ __('Location Intro') }}</h5>
-            <div class="row">
-                <div class="col"><textarea name="location_intro_ar" class="form-control" dir="rtl" placeholder="{{ __('Arabic') }}">{{ old('location_intro_ar', $values['location_intro_ar']) }}</textarea></div>
-                <div class="col"><textarea name="location_intro_en" class="form-control" placeholder="{{ __('English') }}">{{ old('location_intro_en', $values['location_intro_en']) }}</textarea></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><textarea name="location_intro_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl" placeholder="{{ __('Arabic') }}">{{ old('location_intro_ar', $values['location_intro_ar']) }}</textarea></div>
+                <div><textarea name="location_intro_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" placeholder="{{ __('English') }}">{{ old('location_intro_en', $values['location_intro_en']) }}</textarea></div>
             </div>
 
             <h5 class="mt-4">{{ __('Awards Teaser Blurb') }}</h5>
-            <div class="row">
-                <div class="col"><textarea name="awards_teaser_blurb_ar" class="form-control" dir="rtl" placeholder="{{ __('Arabic') }}">{{ old('awards_teaser_blurb_ar', $values['awards_teaser_blurb_ar']) }}</textarea></div>
-                <div class="col"><textarea name="awards_teaser_blurb_en" class="form-control" placeholder="{{ __('English') }}">{{ old('awards_teaser_blurb_en', $values['awards_teaser_blurb_en']) }}</textarea></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><textarea name="awards_teaser_blurb_ar" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" dir="rtl" placeholder="{{ __('Arabic') }}">{{ old('awards_teaser_blurb_ar', $values['awards_teaser_blurb_ar']) }}</textarea></div>
+                <div><textarea name="awards_teaser_blurb_en" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2" placeholder="{{ __('English') }}">{{ old('awards_teaser_blurb_en', $values['awards_teaser_blurb_en']) }}</textarea></div>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-4">{{ __('Save') }}</button>
+            <button type="submit" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-4">{{ __('Save') }}</button>
         </form>
     </div>
 @endsection
