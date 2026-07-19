@@ -57,6 +57,11 @@ class Event extends Model
         return $this->hasMany(AgendaItem::class)->orderBy('day_date')->orderBy('start_time');
     }
 
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(Faq::class)->orderBy('sort_order');
+    }
+
     protected static function newFactory(): EventFactory
     {
         return EventFactory::new();
