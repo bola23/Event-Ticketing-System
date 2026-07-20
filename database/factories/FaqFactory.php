@@ -16,8 +16,8 @@ class FaqFactory extends Factory
     {
         return [
             'event_id' => Event::factory(),
-            'question_ar' => $this->faker->sentence() . '؟',
-            'question_en' => $this->faker->sentence() . '?',
+            'question_ar' => $this->faker->sentence().'؟',
+            'question_en' => $this->faker->sentence().'?',
             'answer_ar' => $this->faker->paragraph(),
             'answer_en' => $this->faker->paragraph(),
             'sort_order' => 0,

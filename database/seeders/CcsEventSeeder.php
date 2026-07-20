@@ -7,8 +7,10 @@ namespace Database\Seeders;
 use App\Enums\AgendaItemType;
 use App\Enums\EventStatus;
 use App\Enums\LandingPageSection;
+use App\Models\AgendaItem;
 use App\Models\Event;
 use App\Models\Faq;
+use App\Models\LandingPageContent;
 use App\Models\Speaker;
 use App\Models\Sponsor;
 use App\Models\TicketType;
@@ -68,7 +70,7 @@ class CcsEventSeeder extends Seeder
                 'name_ar' => $tier['name_ar'],
                 'name_en' => $tier['name_en'],
                 'description_ar' => 'وصف الباقة',
-                'description_en' => $tier['name_en'] . ' ticket tier',
+                'description_en' => $tier['name_en'].' ticket tier',
                 'price' => $tier['price'],
                 'currency' => 'SAR',
                 'workshop_slot_count' => $tier['slots'],
@@ -90,7 +92,7 @@ class CcsEventSeeder extends Seeder
         ]);
         Workshop::factory()->for($event)->create();
 
-        \App\Models\AgendaItem::create([
+        AgendaItem::create([
             'event_id' => $event->id,
             'speaker_id' => $speakerKareem->id,
             'workshop_id' => $workshop->id,
@@ -134,7 +136,7 @@ class CcsEventSeeder extends Seeder
             [LandingPageSection::AwardsTeaser, 'blurb', 'صوّت لصانع المحتوى المفضل لديك قريبًا.', 'Vote for your favorite content creator — coming soon.'],
         ];
         foreach ($content as [$section, $key, $ar, $en]) {
-            \App\Models\LandingPageContent::create([
+            LandingPageContent::create([
                 'event_id' => $event->id,
                 'section' => $section,
                 'field_key' => $key,
