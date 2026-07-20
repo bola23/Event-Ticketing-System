@@ -1,0 +1,67 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Admin;
+
+use App\Models\Event;
+use App\Models\Sponsor;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class SponsorCrudTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_admin_can_create_a_sponsor_for_an_event(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+
+        $response = $this->actingAs($admin)->post(route('admin.events.sponsors.store', $event), [
+            'name_ar' => 'الراعي', 'name_en' => 'Sponsor Co.', 'tier' => 'gold', 'sort_order' => 0,
+        ]);
+
+        $response->assertRedirect(route('admin.events.sponsors.index', $event));
+        $this->assertDatabaseHas('sponsors', ['event_id' => $event->id, 'name_en' => 'Sponsor Co.', 'tier' => 'gold']);
+    }
+
+    public function test_creating_a_sponsor_requires_a_valid_tier(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+
+        $response = $this->actingAs($admin)->post(route('admin.events.sponsors.store', $event), [
+            'name_ar' => 'الراعي', 'name_en' => 'Sponsor Co.', 'tier' => 'not-a-tier',
+        ]);
+
+        $response->assertSessionHasErrors('tier');
+    }
+
+    public function test_admin_can_update_a_sponsor(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $sponsor = Sponsor::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->put(route('admin.events.sponsors.update', [$event, $sponsor]), [
+            'name_ar' => 'محدث', 'name_en' => 'Updated', 'tier' => 'platinum', 'sort_order' => 0,
+        ]);
+
+        $response->assertRedirect(route('admin.events.sponsors.index', $event));
+        $this->assertDatabaseHas('sponsors', ['id' => $sponsor->id, 'tier' => 'platinum']);
+    }
+
+    public function test_admin_can_delete_a_sponsor(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $sponsor = Sponsor::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->delete(route('admin.events.sponsors.destroy', [$event, $sponsor]));
+
+        $response->assertRedirect(route('admin.events.sponsors.index', $event));
+        $this->assertDatabaseMissing('sponsors', ['id' => $sponsor->id]);
+    }
+}
