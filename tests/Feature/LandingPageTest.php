@@ -6,10 +6,13 @@ namespace Tests\Feature;
 
 use App\Enums\EventStatus;
 use App\Enums\LandingPageSection;
+use App\Models\AgendaItem;
 use App\Models\Event;
 use App\Models\Faq;
 use App\Models\LandingPageContent;
 use App\Models\Speaker;
+use App\Models\TicketType;
+use App\Models\Workshop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -95,5 +98,45 @@ class LandingPageTest extends TestCase
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
         $response->assertSee('Held at the Convention Center.');
+    }
+
+    public function test_workshops_teaser_links_to_workshops_index(): void
+    {
+        $event = Event::factory()->create();
+        Workshop::factory()->for($event)->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertSee(route('workshops.index', $event), false);
+    }
+
+    public function test_agenda_teaser_links_to_agenda_page(): void
+    {
+        $event = Event::factory()->create();
+        AgendaItem::factory()->for($event)->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertSee(route('agenda.show', $event), false);
+    }
+
+    public function test_tickets_section_links_to_request_page(): void
+    {
+        $event = Event::factory()->create();
+        $ticketType = TicketType::factory()->for($event)->create(['name_en' => 'General']);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('General');
+        $response->assertSee(route('ticket-requests.create', $event).'?type='.$ticketType->id, false);
+    }
+
+    public function test_awards_teaser_links_to_awards_page(): void
+    {
+        $event = Event::factory()->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertSee(route('awards.show', $event), false);
     }
 }
