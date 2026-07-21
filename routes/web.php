@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\LandingPageContentController;
 use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\TicketTypeController;
@@ -45,5 +46,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->except('show')
             ->parameters(['agenda-items' => 'agendaItem']);
         Route::resource('events.faqs', FaqController::class)->except('show');
+        Route::get('events/{event}/content', [LandingPageContentController::class, 'edit'])->name('events.content.edit');
+        Route::put('events/{event}/content', [LandingPageContentController::class, 'update'])->name('events.content.update');
     });
 });
