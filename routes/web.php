@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AgendaItemController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
@@ -39,5 +40,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('events.ticket-types', TicketTypeController::class)
             ->except('show')
             ->parameters(['ticket-types' => 'ticketType']);
+        Route::resource('events.agenda-items', AgendaItemController::class)
+            ->except('show')
+            ->parameters(['agenda-items' => 'agendaItem']);
     });
 });
