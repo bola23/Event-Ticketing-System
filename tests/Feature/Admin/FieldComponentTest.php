@@ -55,4 +55,14 @@ class FieldComponentTest extends TestCase
         $this->assertStringContainsString('type="checkbox"', $html);
         $this->assertStringContainsString('checked', $html);
     }
+
+    public function test_field_shows_validation_error_when_present(): void
+    {
+        $this->withViewErrors(['name_en' => 'The name en field is required.']);
+
+        $html = Blade::render('<x-admin.field name="name_en" label="Name" />');
+
+        $this->assertStringContainsString('class="text-red-500 text-sm mt-1"', $html);
+        $this->assertStringContainsString('The name en field is required.', $html);
+    }
 }
