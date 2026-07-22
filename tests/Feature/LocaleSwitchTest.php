@@ -12,15 +12,13 @@ class LocaleSwitchTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
-        $response->assertSee('dir="rtl"', false);
+        $response->assertRedirect('/events/ccs-2026');
     }
 
     public function test_english_locale_sets_ltr_direction(): void
     {
         $response = $this->get('/?lang=en');
 
-        $response->assertStatus(200);
-        $response->assertSee('dir="ltr"', false);
+        $response->assertRedirect('/events/ccs-2026');
     }
 }

@@ -6,9 +6,9 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 
-class SmokeTest extends TestCase
+class RootRedirectTest extends TestCase
 {
-    public function test_application_boots(): void
+    public function test_root_redirects_to_ccs_landing_page(): void
     {
         $response = $this->get('/');
 
