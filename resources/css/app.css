@@ -42,3 +42,9 @@ h1, h2, h3, h4, h5, .font-display {
 .ccs-hero {
   background: linear-gradient(135deg, var(--color-ccs-coral) 0%, var(--color-ccs-coral) 12%, var(--color-ccs-red) 13%, var(--color-ccs-maroon) 55%, var(--color-ccs-black) 100%);
 }
+
+.ccs-flag-accent {
+  display: inline-block;
+  clip-path: polygon(0 100%, 0 20%, 100% 0%, 100% 100%);
+  background: linear-gradient(180deg, var(--color-ccs-coral), var(--color-ccs-red));
+}
