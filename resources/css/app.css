@@ -1,6 +1,13 @@
 /* resources/css/app.css */
 @import "tailwindcss";
 
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/manrope/800.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/700.css";
+
 @theme {
   --color-ccs-coral: #ff7e71;
   --color-ccs-red: #d33333;
@@ -10,6 +17,22 @@
   --color-ccs-teal-light: #7ccbcf;
   --color-ccs-gold: #fad48b;
   --color-ccs-gold-dark: #a48755;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+:lang(ar) {
+  font-family: 'Cairo', sans-serif;
+}
+
+h1, h2, h3, h4, h5, .font-display {
+  font-family: 'Manrope', sans-serif;
+}
+
+:lang(ar) h1, :lang(ar) h2, :lang(ar) h3, :lang(ar) h4, :lang(ar) h5, :lang(ar) .font-display {
+  font-family: 'Cairo', sans-serif;
 }
 
 [dir="rtl"] {
