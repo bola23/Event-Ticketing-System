@@ -44,7 +44,7 @@ This is a **presentation-layer pass, not a behavior change**: no new routes (bey
 1. The sidebar's active-nav-item indicator (replacing a plain highlight bar)
 2. A `x-admin.page-header` accent beside each screen's `<h1>`
 
-**Login screen** is where the CCS brand gets its one full-strength moment: the same diagonal coral→red→maroon→near-black gradient background used on the public Hero, with the real logo image (`docs/logo.jpeg`, copied into `resources/images/` and referenced via Vite) centered above a card containing the login form. Every other admin screen stays deliberately quiet — near-black background, minimal color, the flag motif as the only recurring accent — per "spend the boldness in one place."
+**Login screen** is where the CCS brand gets its one full-strength moment: the same diagonal coral→red→maroon→near-black gradient background used on the public Hero, with a CSS-drawn CCS wordmark + flag icon (not an embedded image — `docs/logo.jpeg` turns out to be a full marketing mockup with its own baked-in background, not a clean logo asset, and the existing public Hero already establishes the project's pattern of building the CCS mark in HTML/CSS rather than an image file) centered above a card containing the login form. Every other admin screen stays deliberately quiet — near-black background, minimal color, the flag motif as the only recurring accent — per "spend the boldness in one place."
 
 ## Component architecture (Approach C: shell + a small set of true atoms)
 
