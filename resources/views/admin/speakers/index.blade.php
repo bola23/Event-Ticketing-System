@@ -1,5 +1,5 @@
 {{-- resources/views/admin/speakers/index.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
     <div class="container mx-auto px-4 py-4">
