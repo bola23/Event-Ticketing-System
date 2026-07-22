@@ -18,8 +18,8 @@ class AgendaItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'speaker_id' => ['nullable', 'exists:speakers,id'],
-            'workshop_id' => ['nullable', 'exists:workshops,id'],
+            'speaker_id' => ['nullable', Rule::exists('speakers', 'id')->where('event_id', $this->route('event')->id)],
+            'workshop_id' => ['nullable', Rule::exists('workshops', 'id')->where('event_id', $this->route('event')->id)],
             'day_date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],

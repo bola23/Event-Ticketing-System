@@ -13,7 +13,7 @@
                         <td class="py-2 px-3">{{ $faq->question_en }}</td>
                         <td class="py-2 px-3">
                             <a href="{{ route('admin.events.faqs.edit', [$event, $faq]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.faqs.destroy', [$event, $faq]) }}" class="inline">
+                            <form method="POST" action="{{ route('admin.events.faqs.destroy', [$event, $faq]) }}" class="inline" onsubmit="return confirm('{{ __('Are you sure? This cannot be undone.') }}')">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>

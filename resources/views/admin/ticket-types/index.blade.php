@@ -15,7 +15,7 @@
                         <td class="py-2 px-3">{{ $ticketType->workshop_slot_count ?? __('Unlimited') }}</td>
                         <td class="py-2 px-3">
                             <a href="{{ route('admin.events.ticket-types.edit', [$event, $ticketType]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.ticket-types.destroy', [$event, $ticketType]) }}" class="inline">
+                            <form method="POST" action="{{ route('admin.events.ticket-types.destroy', [$event, $ticketType]) }}" class="inline" onsubmit="return confirm('{{ __('Are you sure? This cannot be undone.') }}')">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>

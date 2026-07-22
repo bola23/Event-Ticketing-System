@@ -19,7 +19,7 @@ class WorkshopRequest extends FormRequest
         $workshopId = $this->route('workshop')?->id;
 
         return [
-            'speaker_id' => ['nullable', 'exists:speakers,id'],
+            'speaker_id' => ['nullable', Rule::exists('speakers', 'id')->where('event_id', $this->route('event')->id)],
             'slug' => ['required', 'string', 'max:255', Rule::unique('workshops', 'slug')->ignore($workshopId)],
             'name_ar' => ['required', 'string', 'max:255'],
             'name_en' => ['required', 'string', 'max:255'],

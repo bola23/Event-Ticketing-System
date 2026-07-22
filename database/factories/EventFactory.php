@@ -27,7 +27,7 @@ class EventFactory extends Factory
             'venue_address_ar' => $this->faker->address(),
             'venue_address_en' => $this->faker->address(),
             'map_embed_url' => $this->faker->url(),
-            'status' => EventStatus::Draft,
+            'status' => EventStatus::Published,
         ];
     }
 }

@@ -15,7 +15,7 @@
                         <td class="py-2 px-3">{{ $item->title_en }}</td>
                         <td class="py-2 px-3">
                             <a href="{{ route('admin.events.agenda-items.edit', [$event, $item]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.agenda-items.destroy', [$event, $item]) }}" class="inline">
+                            <form method="POST" action="{{ route('admin.events.agenda-items.destroy', [$event, $item]) }}" class="inline" onsubmit="return confirm('{{ __('Are you sure? This cannot be undone.') }}')">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>

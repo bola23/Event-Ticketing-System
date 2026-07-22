@@ -14,7 +14,7 @@
                         <td class="py-2 px-3">{{ $workshop->capacity }}</td>
                         <td class="py-2 px-3">
                             <a href="{{ route('admin.events.workshops.edit', [$event, $workshop]) }}">{{ __('Edit') }}</a>
-                            <form method="POST" action="{{ route('admin.events.workshops.destroy', [$event, $workshop]) }}" class="inline">
+                            <form method="POST" action="{{ route('admin.events.workshops.destroy', [$event, $workshop]) }}" class="inline" onsubmit="return confirm('{{ __('Are you sure? This cannot be undone.') }}')">
                                 @csrf @method('DELETE')
                                 <button type="submit">{{ __('Delete') }}</button>
                             </form>

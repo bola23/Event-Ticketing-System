@@ -51,6 +51,28 @@ class AuthTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_login_is_throttled_after_too_many_attempts(): void
+    {
+        User::factory()->create([
+            'email' => 'admin@ccs.test',
+            'password' => bcrypt('password123'),
+        ]);
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->post('/admin/login', [
+                'email' => 'admin@ccs.test',
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $response = $this->post('/admin/login', [
+            'email' => 'admin@ccs.test',
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertStatus(429);
+    }
+
     public function test_authenticated_user_can_log_out(): void
     {
         $user = User::factory()->create();
