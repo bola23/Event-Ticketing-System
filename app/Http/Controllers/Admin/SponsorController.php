@@ -21,7 +21,7 @@ class SponsorController extends Controller
 
     public function create(Event $event): View
     {
-        return view('admin.sponsors.form', ['event' => $event, 'sponsor' => new Sponsor()]);
+        return view('admin.sponsors.form', ['event' => $event, 'sponsor' => new Sponsor]);
     }
 
     public function store(SponsorRequest $request, Event $event): RedirectResponse
@@ -57,7 +57,7 @@ class SponsorController extends Controller
     private function assertBelongsToEvent(Event $event, Sponsor $sponsor): void
     {
         if ($sponsor->event_id !== $event->id) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
     }
 }
