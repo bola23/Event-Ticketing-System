@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Blade;
 use Tests\TestCase;
 
 class TableComponentTest extends TestCase
