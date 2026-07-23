@@ -40,9 +40,10 @@ This is a **presentation-layer pass, not a behavior change**: no new routes (bey
 - Font selection switches via `:lang(ar)` / `:lang(en)` CSS rules, keyed off the same `app()->getLocale()` value already driving `dir="rtl"`/`dir="ltr"` on `<html>`
 - Fonts self-hosted via `@fontsource` npm packages (bundled through Vite, not a Google Fonts CDN call) to keep the app's asset pipeline self-contained and avoid an external network dependency at render time
 
-**Signature element:** the CCS logo is a flag/parallelogram shape (angled top edge, coral sliver over a red/maroon body). A small CSS `clip-path`-drawn version of this shape becomes the admin panel's one recurring motif, used in exactly two places, deliberately not more:
+**Signature element:** the CCS logo is a flag/parallelogram shape (angled top edge, coral sliver over a red/maroon body). A small CSS `clip-path`-drawn version of this shape becomes the admin panel's one recurring motif, used in exactly three places, deliberately not more:
 1. The sidebar's active-nav-item indicator (replacing a plain highlight bar)
 2. A `x-admin.page-header` accent beside each screen's `<h1>`
+3. The login screen's brand mark (see below) — its one deliberate "bold moment," not a quiet-screen accent
 
 **Login screen** is where the CCS brand gets its one full-strength moment: the same diagonal coral→red→maroon→near-black gradient background used on the public Hero, with a CSS-drawn CCS wordmark + flag icon (not an embedded image — `docs/logo.jpeg` turns out to be a full marketing mockup with its own baked-in background, not a clean logo asset, and the existing public Hero already establishes the project's pattern of building the CCS mark in HTML/CSS rather than an image file) centered above a card containing the login form. Every other admin screen stays deliberately quiet — near-black background, minimal color, the flag motif as the only recurring accent — per "spend the boldness in one place."
 

@@ -16,7 +16,7 @@
 - No new business logic, validation rules, or database changes anywhere in this plan.
 - CCS palette tokens only (`ccs-coral/red/maroon/black/teal/teal-light/gold/gold-dark`, already in `resources/css/app.css`) — no new colors invented ad hoc.
 - Bilingual: every `_ar` input keeps `dir="rtl"`; every `_en` input has no `dir` attribute (inherits `ltr`).
-- The flag-motif accent (`.ccs-flag-accent`) appears in exactly two places: sidebar active-nav-item indicator, and `x-admin.page-header`. Nowhere else.
+- The flag-motif accent (`.ccs-flag-accent`) appears in exactly three places: the sidebar active-nav-item indicator, `x-admin.page-header`, and the login screen's brand mark (Task 9's deliberate "bold moment" — see Visual system section). Nowhere else.
 - Existing full test suite (89 tests as of the last merge) must stay green after every task.
 
 ---
