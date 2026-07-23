@@ -68,4 +68,26 @@ class TicketTypeCrudTest extends TestCase
         $response->assertRedirect(route('admin.events.ticket-types.index', $event));
         $this->assertDatabaseMissing('ticket_types', ['id' => $ticketType->id]);
     }
+
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        TicketType::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.ticket-types.index', $event));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $ticketType = TicketType::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.ticket-types.edit', [$event, $ticketType]));
+
+        $response->assertOk();
+    }
 }

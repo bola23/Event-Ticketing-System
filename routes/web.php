@@ -19,7 +19,7 @@ use App\Http\Middleware\EnsureEventIsPublished;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('/events/ccs-2026');
+    return redirect()->route('landing.show', 'ccs-2026');
 });
 
 Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->group(function () {

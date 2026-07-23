@@ -52,4 +52,26 @@ class FaqCrudTest extends TestCase
         $response->assertRedirect(route('admin.events.faqs.index', $event));
         $this->assertDatabaseMissing('faqs', ['id' => $faq->id]);
     }
+
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        Faq::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.faqs.index', $event));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $faq = Faq::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.faqs.edit', [$event, $faq]));
+
+        $response->assertOk();
+    }
 }

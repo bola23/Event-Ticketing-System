@@ -24,8 +24,8 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('3');
-        $response->assertSee('2');
-        $response->assertSee('1');
+        $response->assertViewHas('totalEvents', 3);
+        $response->assertViewHas('publishedEvents', 2);
+        $response->assertViewHas('draftEvents', 1);
     }
 }

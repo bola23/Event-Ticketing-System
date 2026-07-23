@@ -84,4 +84,26 @@ class AgendaItemCrudTest extends TestCase
         $response->assertRedirect(route('admin.events.agenda-items.index', $event));
         $this->assertDatabaseMissing('agenda_items', ['id' => $item->id]);
     }
+
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        AgendaItem::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.agenda-items.index', $event));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $item = AgendaItem::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.agenda-items.edit', [$event, $item]));
+
+        $response->assertOk();
+    }
 }

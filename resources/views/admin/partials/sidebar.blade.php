@@ -11,8 +11,11 @@
             @endif
             {{ __('Dashboard') }}
         </a>
-        <a href="{{ route('admin.events.index') }}" class="flex items-center gap-2 px-3 py-2 rounded {{ request()->routeIs('admin.events.*') ? 'bg-gray-900' : 'hover:bg-gray-900' }}">
-            @if(request()->routeIs('admin.events.*'))
+        @php
+            $eventsResourceRoutes = ['admin.events.index', 'admin.events.create', 'admin.events.store', 'admin.events.edit', 'admin.events.update', 'admin.events.destroy'];
+        @endphp
+        <a href="{{ route('admin.events.index') }}" class="flex items-center gap-2 px-3 py-2 rounded {{ request()->routeIs(...$eventsResourceRoutes) ? 'bg-gray-900' : 'hover:bg-gray-900' }}">
+            @if(request()->routeIs(...$eventsResourceRoutes))
                 <span class="ccs-flag-accent" style="width:4px;height:16px;"></span>
             @endif
             {{ __('Events') }}

@@ -64,4 +64,26 @@ class SponsorCrudTest extends TestCase
         $response->assertRedirect(route('admin.events.sponsors.index', $event));
         $this->assertDatabaseMissing('sponsors', ['id' => $sponsor->id]);
     }
+
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        Sponsor::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.sponsors.index', $event));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $sponsor = Sponsor::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.sponsors.edit', [$event, $sponsor]));
+
+        $response->assertOk();
+    }
 }

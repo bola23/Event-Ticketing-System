@@ -67,6 +67,28 @@ class SpeakerCrudTest extends TestCase
         $this->assertDatabaseMissing('speakers', ['id' => $speaker->id]);
     }
 
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        Speaker::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.speakers.index', $event));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $speaker = Speaker::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.speakers.edit', [$event, $speaker]));
+
+        $response->assertOk();
+    }
+
     public function test_editing_a_speaker_from_another_event_returns_404(): void
     {
         $admin = User::factory()->create();

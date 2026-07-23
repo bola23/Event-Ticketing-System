@@ -79,4 +79,24 @@ class EventCrudTest extends TestCase
         $response->assertRedirect(route('admin.events.index'));
         $this->assertDatabaseMissing('events', ['id' => $event->id]);
     }
+
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        Event::factory()->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.index'));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.edit', $event));
+
+        $response->assertOk();
+    }
 }

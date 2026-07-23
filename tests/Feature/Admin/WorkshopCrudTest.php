@@ -72,4 +72,26 @@ class WorkshopCrudTest extends TestCase
         $response->assertRedirect(route('admin.events.workshops.index', $event));
         $this->assertDatabaseMissing('workshops', ['id' => $workshop->id]);
     }
+
+    public function test_admin_can_view_the_index_page_with_records(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        Workshop::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.workshops.index', $event));
+
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_the_edit_page(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $workshop = Workshop::factory()->for($event)->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.workshops.edit', [$event, $workshop]));
+
+        $response->assertOk();
+    }
 }
