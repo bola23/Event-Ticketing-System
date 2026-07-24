@@ -48,3 +48,55 @@ h1, h2, h3, h4, h5, .font-display {
   clip-path: polygon(0 100%, 0 20%, 100% 0%, 100% 100%);
   background: linear-gradient(180deg, var(--color-ccs-coral), var(--color-ccs-red));
 }
+
+[x-cloak] {
+  display: none !important;
+}
+
+.ccs-section {
+  padding-inline: clamp(20px, 6vw, 80px);
+  padding-bottom: 100px;
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+.ccs-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+@keyframes ccs-fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ccs-float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(3deg); }
+}
+
+@keyframes ccs-pulse-glow {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.6; }
+}
+
+.ccs-fade-up {
+  animation: ccs-fade-up 0.9s ease both;
+}
+
+.ccs-float-slow {
+  animation: ccs-float-slow 14s ease-in-out infinite;
+}
+
+.ccs-pulse-glow {
+  animation: ccs-pulse-glow 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ccs-fade-up, .ccs-float-slow, .ccs-pulse-glow {
+    animation: none;
+  }
+}
