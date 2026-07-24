@@ -32,6 +32,7 @@
                         ['prefix' => 'admin.events.workshops', 'route' => 'admin.events.workshops.index', 'label' => __('Workshops')],
                         ['prefix' => 'admin.events.agenda-items', 'route' => 'admin.events.agenda-items.index', 'label' => __('Agenda')],
                         ['prefix' => 'admin.events.gallery-photos', 'route' => 'admin.events.gallery-photos.index', 'label' => __('Gallery')],
+                        ['prefix' => 'admin.events.testimonials', 'route' => 'admin.events.testimonials.index', 'label' => __('Testimonials')],
                         ['prefix' => 'admin.events.faqs', 'route' => 'admin.events.faqs.index', 'label' => __('FAQs')],
                         ['prefix' => 'admin.events.content', 'route' => 'admin.events.content.edit', 'label' => __('Content')],
                     ];

@@ -12,6 +12,7 @@ use App\Models\Faq;
 use App\Models\GalleryPhoto;
 use App\Models\LandingPageContent;
 use App\Models\Speaker;
+use App\Models\Testimonial;
 use App\Models\TicketType;
 use App\Models\Workshop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -228,5 +229,25 @@ class LandingPageTest extends TestCase
         $response = $this->get(route('landing.show', $event));
 
         $response->assertDontSee('id="gallery"', false);
+    }
+
+    public function test_testimonials_section_lists_quotes(): void
+    {
+        $event = Event::factory()->create();
+        Testimonial::factory()->for($event)->create(['quote_en' => 'The best conference all year.']);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('id="testimonials"', false);
+        $response->assertSee('The best conference all year.');
+    }
+
+    public function test_testimonials_section_omitted_when_none_exist(): void
+    {
+        $event = Event::factory()->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertDontSee('id="testimonials"', false);
     }
 }
