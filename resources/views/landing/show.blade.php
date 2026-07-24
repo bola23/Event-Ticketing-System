@@ -12,6 +12,7 @@
     @include('landing.partials.agenda-teaser', ['event' => $event])
     @include('landing.partials.tickets', ['event' => $event])
     @include('landing.partials.awards-teaser', ['event' => $event])
+    @include('landing.partials.gallery', ['event' => $event])
     @include('landing.partials.partners', ['event' => $event])
     @include('landing.partials.faq', ['event' => $event])
     @include('landing.partials.location', ['event' => $event])

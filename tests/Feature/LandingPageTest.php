@@ -9,6 +9,7 @@ use App\Enums\LandingPageSection;
 use App\Models\AgendaItem;
 use App\Models\Event;
 use App\Models\Faq;
+use App\Models\GalleryPhoto;
 use App\Models\LandingPageContent;
 use App\Models\Speaker;
 use App\Models\TicketType;
@@ -207,5 +208,25 @@ class LandingPageTest extends TestCase
         $response->assertSee('1 workshop included');
         $response->assertSee('No workshops included');
         $response->assertSee('Unlimited workshops');
+    }
+
+    public function test_gallery_section_lists_photos(): void
+    {
+        $event = Event::factory()->create();
+        GalleryPhoto::factory()->for($event)->create(['caption_en' => 'Opening night crowd']);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('id="gallery"', false);
+        $response->assertSee('Opening night crowd');
+    }
+
+    public function test_gallery_section_omitted_when_no_photos(): void
+    {
+        $event = Event::factory()->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertDontSee('id="gallery"', false);
     }
 }

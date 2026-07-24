@@ -63,6 +63,11 @@ class Event extends Model
         return $this->hasMany(Faq::class)->orderBy('sort_order');
     }
 
+    public function galleryPhotos(): HasMany
+    {
+        return $this->hasMany(GalleryPhoto::class)->orderBy('sort_order');
+    }
+
     public function landingPageContent(): HasMany
     {
         return $this->hasMany(LandingPageContent::class);
