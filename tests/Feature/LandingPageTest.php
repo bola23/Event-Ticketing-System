@@ -139,4 +139,31 @@ class LandingPageTest extends TestCase
 
         $response->assertSee(route('awards.show', $event), false);
     }
+
+    public function test_hero_headline_overrides_event_name_when_set(): void
+    {
+        $event = Event::factory()->create(['name_en' => 'Content Creators Summit']);
+        LandingPageContent::factory()->for($event)->create([
+            'section' => LandingPageSection::Hero,
+            'field_key' => 'headline',
+            'value_en' => 'The Future of Content',
+        ]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('The Future of Content');
+        $response->assertDontSee('Content Creators Summit');
+    }
+
+    public function test_hero_eyebrow_shows_locale_correct_venue(): void
+    {
+        $event = Event::factory()->create([
+            'venue_name_ar' => 'قاعة المؤتمرات', 'venue_name_en' => 'Convention Hall',
+        ]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('Convention Hall');
+        $response->assertDontSee('قاعة المؤتمرات');
+    }
 }

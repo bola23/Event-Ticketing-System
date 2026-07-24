@@ -1,12 +1,55 @@
 {{-- resources/views/landing/partials/hero.blade.php --}}
-<section id="hero" class="ccs-hero flex flex-col items-center justify-center text-center text-white" style="min-height: 70vh;">
-    <p class="uppercase text-sm">CCS &middot; {{ $event->name_ar }}</p>
-    <h1 class="text-5xl font-bold">{{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}</h1>
-    <p class="text-lg" x-data="{ now: Date.now(), target: new Date('{{ $event->start_date->toDateString() }}').getTime() }"
-       x-init="setInterval(() => now = Date.now(), 1000)">
-        <span x-text="Math.max(0, Math.floor((target - now) / 86400000))"></span>
-        {{ __('days to go') }}
-    </p>
-    <p>{{ app()->getLocale() === 'ar' ? $event->venue_name_ar : $event->venue_name_en }}</p>
-    <a href="#tickets" class="bg-ccs-red hover:bg-ccs-maroon text-white px-4 py-2 rounded mt-3">{{ __('Request Your Ticket') }}</a>
+@php
+    $headline = $event->contentFor(\App\Enums\LandingPageSection::Hero, 'headline');
+    $headlineText = app()->getLocale() === 'ar'
+        ? ($headline?->value_ar ?: $event->name_ar)
+        : ($headline?->value_en ?: $event->name_en);
+    $venueName = app()->getLocale() === 'ar' ? $event->venue_name_ar : $event->venue_name_en;
+    $tagline = app()->getLocale() === 'ar' ? $event->tagline_ar : $event->tagline_en;
+@endphp
+<section id="hero" class="ccs-hero relative min-h-screen flex flex-col justify-center overflow-hidden px-5 md:px-16 pt-36 pb-24">
+    <div class="absolute w-[520px] h-[520px] border border-white/10 rounded-full -top-40 -right-28 ccs-float-slow" aria-hidden="true"></div>
+    <div class="absolute w-[180px] h-[180px] rounded-full bg-ccs-teal-light/30 blur-3xl top-1/4 left-1/2 ccs-pulse-glow" aria-hidden="true"></div>
+
+    <div class="relative max-w-5xl ccs-fade-up">
+        <p class="text-sm font-bold tracking-[0.14em] uppercase text-ccs-coral mb-5">
+            {{ $event->start_date->format('M j') }}&ndash;{{ $event->end_date->format('j, Y') }}
+            @if($venueName) &middot; {{ $venueName }} @endif
+        </p>
+        <h1 class="font-display text-[clamp(2.75rem,9vw,7rem)] font-extrabold leading-[0.98] tracking-tight mb-7">{{ $headlineText }}</h1>
+        @if($tagline)
+            <p class="text-lg md:text-2xl text-gray-300 max-w-xl leading-relaxed mb-11">{{ $tagline }}</p>
+        @endif
+        <div class="flex flex-wrap gap-4 mb-16">
+            <a href="#tickets" class="px-8 py-4 rounded-lg bg-gradient-to-br from-ccs-red to-ccs-maroon text-base font-bold">{{ __('Request Your Ticket') }}</a>
+            <a href="#about" class="px-8 py-4 rounded-lg border border-white/35 text-base font-bold">{{ __('Explore Event') }}</a>
+        </div>
+
+        <div class="flex flex-wrap gap-3 md:gap-7" x-data="{
+                now: Date.now(),
+                target: new Date('{{ $event->start_date->toDateString() }}').getTime(),
+                get diff() { return Math.max(0, this.target - this.now); },
+                get d() { return String(Math.floor(this.diff / 86400000)).padStart(2, '0'); },
+                get h() { return String(Math.floor(this.diff / 3600000) % 24).padStart(2, '0'); },
+                get m() { return String(Math.floor(this.diff / 60000) % 60).padStart(2, '0'); },
+                get s() { return String(Math.floor(this.diff / 1000) % 60).padStart(2, '0'); },
+            }" x-init="setInterval(() => now = Date.now(), 1000)">
+            <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl min-w-[88px]">
+                <span class="text-3xl md:text-4xl font-extrabold tabular-nums" x-text="d"></span>
+                <span class="text-xs uppercase tracking-wide text-gray-400 mt-1.5">{{ __('Days') }}</span>
+            </div>
+            <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl min-w-[88px]">
+                <span class="text-3xl md:text-4xl font-extrabold tabular-nums" x-text="h"></span>
+                <span class="text-xs uppercase tracking-wide text-gray-400 mt-1.5">{{ __('Hours') }}</span>
+            </div>
+            <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl min-w-[88px]">
+                <span class="text-3xl md:text-4xl font-extrabold tabular-nums" x-text="m"></span>
+                <span class="text-xs uppercase tracking-wide text-gray-400 mt-1.5">{{ __('Min') }}</span>
+            </div>
+            <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl min-w-[88px]">
+                <span class="text-3xl md:text-4xl font-extrabold tabular-nums" x-text="s"></span>
+                <span class="text-xs uppercase tracking-wide text-gray-400 mt-1.5">{{ __('Sec') }}</span>
+            </div>
+        </div>
+    </div>
 </section>

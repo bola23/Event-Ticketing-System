@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en)
+@php
+    $heroHeadline = $event->contentFor(\App\Enums\LandingPageSection::Hero, 'headline');
+    $pageTitle = app()->getLocale() === 'ar'
+        ? ($heroHeadline?->value_ar ?: $event->name_ar)
+        : ($heroHeadline?->value_en ?: $event->name_en);
+@endphp
+
+@section('title', $pageTitle)
 
 @section('content')
     @include('landing.partials.nav', ['event' => $event])

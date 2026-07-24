@@ -1,9 +1,14 @@
 {{-- resources/views/landing/partials/footer.blade.php --}}
+@php
+    $heroHeadline = $event->contentFor(\App\Enums\LandingPageSection::Hero, 'headline');
+@endphp
 <footer class="ccs-section pt-24">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
         <div>
             <div class="font-display font-extrabold text-xl mb-4">CCS <span class="text-ccs-coral">{{ $event->start_date->format('Y') }}</span></div>
-            <p class="text-sm text-gray-500 max-w-[220px]">{{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}</p>
+            @unless($heroHeadline)
+                <p class="text-sm text-gray-500 max-w-[220px]">{{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}</p>
+            @endunless
         </div>
         <div class="flex flex-col gap-3">
             <span class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">{{ __('Event') }}</span>
@@ -27,6 +32,6 @@
         </div>
     </div>
     <div class="flex flex-wrap justify-between items-center gap-4 pt-8 border-t border-white/10 text-xs text-gray-500">
-        <span>&copy; {{ $event->start_date->format('Y') }} {{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}. {{ __('All rights reserved.') }}</span>
+        <span>&copy; {{ $event->start_date->format('Y') }}@unless($heroHeadline) {{ app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en }}.@endunless {{ __('All rights reserved.') }}</span>
     </div>
 </footer>
