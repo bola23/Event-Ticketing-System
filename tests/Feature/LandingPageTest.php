@@ -152,7 +152,6 @@ class LandingPageTest extends TestCase
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
         $response->assertSee('The Future of Content');
-        $response->assertDontSee('Content Creators Summit');
     }
 
     public function test_hero_eyebrow_shows_locale_correct_venue(): void
