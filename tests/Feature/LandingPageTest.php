@@ -194,4 +194,18 @@ class LandingPageTest extends TestCase
         $response->assertSee('Convention Hall');
         $response->assertDontSee('قاعة المؤتمرات');
     }
+
+    public function test_tickets_section_shows_workshop_slot_label(): void
+    {
+        $event = Event::factory()->create();
+        TicketType::factory()->for($event)->create(['name_en' => 'VIP', 'workshop_slot_count' => 1]);
+        TicketType::factory()->for($event)->create(['name_en' => 'General', 'workshop_slot_count' => 0]);
+        TicketType::factory()->for($event)->create(['name_en' => 'Platinum', 'workshop_slot_count' => null]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('1 workshop included');
+        $response->assertSee('No workshops included');
+        $response->assertSee('Unlimited workshops');
+    }
 }
