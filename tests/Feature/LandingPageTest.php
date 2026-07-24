@@ -134,6 +134,21 @@ class LandingPageTest extends TestCase
         $response->assertSee(route('agenda.show', $event), false);
     }
 
+    public function test_agenda_section_shows_real_session_details(): void
+    {
+        $event = Event::factory()->create();
+        $speaker = Speaker::factory()->for($event)->create(['name_en' => 'Maya Chen']);
+        AgendaItem::factory()->for($event)->create([
+            'speaker_id' => $speaker->id, 'title_en' => 'Opening Keynote', 'start_time' => '09:00',
+        ]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('Opening Keynote');
+        $response->assertSee('Maya Chen');
+        $response->assertSee('09:00');
+    }
+
     public function test_tickets_section_links_to_request_page(): void
     {
         $event = Event::factory()->create();
