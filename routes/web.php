@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AgendaItemController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FaqController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Admin\TicketTypeController;
 use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AwardsController;
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\TicketRequestController;
 use App\Http\Controllers\WorkshopController;
@@ -31,6 +33,7 @@ Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->grou
     Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
     Route::get('/workshops/{workshop}', [WorkshopController::class, 'show'])->name('workshops.show');
     Route::get('/request', [TicketRequestController::class, 'create'])->name('ticket-requests.create');
+    Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -54,6 +57,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->except('show')
             ->parameters(['gallery-photos' => 'galleryPhoto']);
         Route::resource('events.testimonials', TestimonialController::class)->except('show');
+        Route::get('events/{event}/contact-messages', [AdminContactMessageController::class, 'index'])->name('events.contact-messages.index');
         Route::resource('events.faqs', FaqController::class)->except('show');
         Route::get('events/{event}/content', [LandingPageContentController::class, 'edit'])->name('events.content.edit');
         Route::put('events/{event}/content', [LandingPageContentController::class, 'update'])->name('events.content.update');

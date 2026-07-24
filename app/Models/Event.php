@@ -73,6 +73,11 @@ class Event extends Model
         return $this->hasMany(Testimonial::class)->orderBy('sort_order');
     }
 
+    public function contactMessages(): HasMany
+    {
+        return $this->hasMany(ContactMessage::class)->latest();
+    }
+
     public function landingPageContent(): HasMany
     {
         return $this->hasMany(LandingPageContent::class);
