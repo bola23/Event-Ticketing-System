@@ -8,6 +8,7 @@ enum LandingPageSection: string
 {
     case Hero = 'hero';
     case About = 'about';
+    case Stats = 'stats';
     case Location = 'location';
     case AwardsTeaser = 'awards_teaser';
 }

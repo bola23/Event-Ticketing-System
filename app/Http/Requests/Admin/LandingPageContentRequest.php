@@ -24,6 +24,10 @@ class LandingPageContentRequest extends FormRequest
             'location_intro_en' => ['nullable', 'string'],
             'awards_teaser_blurb_ar' => ['nullable', 'string'],
             'awards_teaser_blurb_en' => ['nullable', 'string'],
+            'stats_attendees_count_ar' => ['nullable', 'string', 'max:50'],
+            'stats_attendees_count_en' => ['nullable', 'string', 'max:50'],
+            'stats_countries_count_ar' => ['nullable', 'string', 'max:50'],
+            'stats_countries_count_en' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

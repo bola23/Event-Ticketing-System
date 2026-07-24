@@ -19,6 +19,8 @@ class LandingPageContentController extends Controller
         'about_body' => ['section' => LandingPageSection::About, 'field_key' => 'body'],
         'location_intro' => ['section' => LandingPageSection::Location, 'field_key' => 'intro'],
         'awards_teaser_blurb' => ['section' => LandingPageSection::AwardsTeaser, 'field_key' => 'blurb'],
+        'stats_attendees_count' => ['section' => LandingPageSection::Stats, 'field_key' => 'attendees_count'],
+        'stats_countries_count' => ['section' => LandingPageSection::Stats, 'field_key' => 'countries_count'],
     ];
 
     public function edit(Event $event): View

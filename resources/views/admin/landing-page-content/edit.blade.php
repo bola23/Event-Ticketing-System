@@ -20,6 +20,10 @@
         <h2 class="font-display text-lg font-bold mt-6 mb-2">{{ __('Awards Teaser Blurb') }}</h2>
         <x-admin.bilingual-field type="textarea" name="awards_teaser_blurb" :value-ar="old('awards_teaser_blurb_ar', $values['awards_teaser_blurb_ar'])" :value-en="old('awards_teaser_blurb_en', $values['awards_teaser_blurb_en'])" />
 
+        <h2 class="font-display text-lg font-bold mt-6 mb-2">{{ __('Stats') }}</h2>
+        <x-admin.bilingual-field name="stats_attendees_count" label="{{ __('Attendees') }}" :value-ar="old('stats_attendees_count_ar', $values['stats_attendees_count_ar'])" :value-en="old('stats_attendees_count_en', $values['stats_attendees_count_en'])" />
+        <x-admin.bilingual-field name="stats_countries_count" label="{{ __('Countries') }}" :value-ar="old('stats_countries_count_ar', $values['stats_countries_count_ar'])" :value-en="old('stats_countries_count_en', $values['stats_countries_count_en'])" />
+
         <x-admin.button type="submit" class="mt-4">{{ __('Save') }}</x-admin.button>
     </form>
 @endsection

@@ -6,6 +6,7 @@
     @include('landing.partials.nav', ['event' => $event])
     @include('landing.partials.hero', ['event' => $event])
     @include('landing.partials.about', ['event' => $event])
+    @include('landing.partials.stats', ['event' => $event])
     @include('landing.partials.speakers', ['event' => $event])
     @include('landing.partials.workshops-teaser', ['event' => $event])
     @include('landing.partials.agenda-teaser', ['event' => $event])
