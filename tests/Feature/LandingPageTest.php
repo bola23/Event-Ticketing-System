@@ -110,6 +110,20 @@ class LandingPageTest extends TestCase
         $response->assertSee(route('workshops.index', $event), false);
     }
 
+    public function test_workshops_section_shows_description_and_capacity(): void
+    {
+        $event = Event::factory()->create();
+        Workshop::factory()->for($event)->create([
+            'name_en' => 'Editing at Scale', 'description_en' => 'Hands-on editing techniques.', 'capacity' => 40,
+        ]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('Editing at Scale');
+        $response->assertSee('Hands-on editing techniques.');
+        $response->assertSee('40 seats');
+    }
+
     public function test_agenda_teaser_links_to_agenda_page(): void
     {
         $event = Event::factory()->create();
