@@ -10,10 +10,13 @@ use App\Enums\LandingPageSection;
 use App\Models\AgendaItem;
 use App\Models\Event;
 use App\Models\Faq;
+use App\Models\GalleryPhoto;
 use App\Models\LandingPageContent;
 use App\Models\Speaker;
 use App\Models\Sponsor;
+use App\Models\Testimonial;
 use App\Models\TicketType;
+use App\Models\TicketTypeFeature;
 use App\Models\Workshop;
 use Illuminate\Database\Seeder;
 
@@ -29,12 +32,16 @@ class CcsEventSeeder extends Seeder
             'tagline_en' => 'Impact that continues',
             'start_date' => '2026-08-15',
             'end_date' => '2026-08-16',
-            'venue_name_ar' => 'مركز المؤتمرات',
-            'venue_name_en' => 'Convention Center',
-            'venue_address_ar' => 'الرياض، المملكة العربية السعودية',
-            'venue_address_en' => 'Riyadh, Saudi Arabia',
-            'map_embed_url' => 'https://maps.google.com/?q=Riyadh',
+            'venue_name_ar' => 'مركز القاهرة الدولي للمؤتمرات',
+            'venue_name_en' => 'Cairo International Convention Centre',
+            'venue_address_ar' => 'مدينة نصر، القاهرة، جمهورية مصر العربية',
+            'venue_address_en' => 'Nasr City, Cairo, Egypt',
+            'map_embed_url' => 'https://maps.google.com/?q=Cairo+International+Convention+Centre',
             'status' => EventStatus::Published,
+            'visible_sections' => array_merge(
+                array_fill_keys(Event::TOGGLEABLE_SECTIONS, true),
+                ['stats' => false],
+            ),
         ]);
 
         $speakerKareem = Speaker::create([
@@ -45,38 +52,108 @@ class CcsEventSeeder extends Seeder
             'title_en' => 'Content Creator',
             'bio_ar' => 'صانع محتوى رقمي بخبرة تتجاوز عشر سنوات.',
             'bio_en' => 'Digital content creator with over a decade of experience.',
+            'photo_path' => 'https://picsum.photos/seed/ccs-speaker-kareem/400/400',
             'sort_order' => 1,
         ]);
-        Speaker::factory()->for($event)->count(2)->create();
-
-        Sponsor::create([
+        Speaker::create([
             'event_id' => $event->id,
-            'name_ar' => 'الراعي الذهبي',
-            'name_en' => 'Golden Sponsor Co.',
-            'tier' => 'gold',
-            'sort_order' => 1,
+            'name_ar' => 'نور إبراهيم',
+            'name_en' => 'Nour Ibrahim',
+            'title_ar' => 'مؤسسة استوديو محتوى',
+            'title_en' => 'Founder, Content Studio',
+            'bio_ar' => 'مؤسسة استوديو إنتاج محتوى مقره القاهرة، تركز أعمالها على صناعة المحتوى القصير.',
+            'bio_en' => 'Founder of a Cairo-based content production studio focused on short-form storytelling.',
+            'photo_path' => 'https://picsum.photos/seed/ccs-speaker-nour/400/400',
+            'sort_order' => 2,
         ]);
-        Sponsor::factory()->for($event)->create(['tier' => 'silver']);
+        Speaker::create([
+            'event_id' => $event->id,
+            'name_ar' => 'عمر خالد',
+            'name_en' => 'Omar Khaled',
+            'title_ar' => 'خبير تسويق رقمي',
+            'title_en' => 'Digital Marketing Strategist',
+            'bio_ar' => 'خبير تسويق رقمي يساعد صناع المحتوى على بناء جمهور حقيقي ومستدام.',
+            'bio_en' => 'Digital marketing strategist helping creators build a real, sustainable audience.',
+            'photo_path' => 'https://picsum.photos/seed/ccs-speaker-omar/400/400',
+            'sort_order' => 3,
+        ]);
+        Speaker::factory()->for($event)->create(['photo_path' => 'https://picsum.photos/seed/ccs-speaker-extra/400/400']);
+
+        $sponsors = [
+            ['name_ar' => 'نايل تك', 'name_en' => 'Nile Tech', 'tier' => 'platinum'],
+            ['name_ar' => 'استوديوهات القاهرة', 'name_en' => 'Cairo Studios', 'tier' => 'platinum'],
+            ['name_ar' => 'الراعي الذهبي', 'name_en' => 'Golden Sponsor Co.', 'tier' => 'gold'],
+            ['name_ar' => 'دلتا ميديا', 'name_en' => 'Delta Media', 'tier' => 'gold'],
+            ['name_ar' => 'أسكندرية كرييتف', 'name_en' => 'Alexandria Creative', 'tier' => 'gold'],
+            ['name_ar' => 'مجتمع صناع المحتوى', 'name_en' => 'Creators Community', 'tier' => 'community'],
+            ['name_ar' => 'هَب المحتوى', 'name_en' => 'Content Hub', 'tier' => 'community'],
+            ['name_ar' => 'استوديو الجيزة', 'name_en' => 'Giza Studio', 'tier' => 'community'],
+            ['name_ar' => 'شبكة المبدعين', 'name_en' => 'Creators Network', 'tier' => 'community'],
+        ];
+        foreach ($sponsors as $i => $sponsor) {
+            Sponsor::create([
+                ...$sponsor,
+                'event_id' => $event->id,
+                'logo_path' => 'https://placehold.co/240x100?text='.urlencode($sponsor['name_en']),
+                'sort_order' => $i,
+            ]);
+        }
 
         $ticketSlots = [
-            ['name_en' => 'General', 'name_ar' => 'عام', 'slots' => 0, 'price' => 300],
-            ['name_en' => 'VIP', 'name_ar' => 'كبار الشخصيات', 'slots' => 1, 'price' => 700],
-            ['name_en' => 'Premium', 'name_ar' => 'مميز', 'slots' => 2, 'price' => 1200],
-            ['name_en' => 'Platinum', 'name_ar' => 'بلاتيني', 'slots' => null, 'price' => 2500],
+            [
+                'name_en' => 'General', 'name_ar' => 'عام', 'slots' => 0, 'price' => 300,
+                'features' => [
+                    ['ar' => 'دخول كامل للحدث', 'en' => 'Full event access'],
+                    ['ar' => 'الكلمات الرئيسية والجلسات', 'en' => 'Keynotes & sessions'],
+                    ['ar' => 'دخول منطقة المعرض', 'en' => 'Expo floor access'],
+                ],
+            ],
+            [
+                'name_en' => 'VIP', 'name_ar' => 'كبار الشخصيات', 'slots' => 1, 'price' => 700,
+                'features' => [
+                    ['ar' => 'كل مزايا باقة عام', 'en' => 'Everything in General'],
+                    ['ar' => 'ورشة عمل واحدة من اختيارك', 'en' => '1 workshop of your choice'],
+                    ['ar' => 'جلوس بالأولوية', 'en' => 'Priority seating'],
+                ],
+            ],
+            [
+                'name_en' => 'Premium', 'name_ar' => 'مميز', 'slots' => 2, 'price' => 1200,
+                'features' => [
+                    ['ar' => 'كل مزايا باقة كبار الشخصيات', 'en' => 'Everything in VIP'],
+                    ['ar' => 'ورشتا عمل من اختيارك', 'en' => '2 workshops of your choice'],
+                    ['ar' => 'دخول الصالة الخاصة', 'en' => 'Lounge access'],
+                ],
+            ],
+            [
+                'name_en' => 'Platinum', 'name_ar' => 'بلاتيني', 'slots' => null, 'price' => 2500,
+                'features' => [
+                    ['ar' => 'كل مزايا باقة مميز', 'en' => 'Everything in Premium'],
+                    ['ar' => '3 ورش عمل من اختيارك', 'en' => '3 workshops of your choice'],
+                    ['ar' => 'عشاء خاص وجلوس بالصف الأول', 'en' => 'Private dinner & front-row seating'],
+                ],
+            ],
         ];
         foreach ($ticketSlots as $i => $tier) {
-            TicketType::create([
+            $ticketType = TicketType::create([
                 'event_id' => $event->id,
                 'name_ar' => $tier['name_ar'],
                 'name_en' => $tier['name_en'],
                 'description_ar' => 'وصف الباقة',
                 'description_en' => $tier['name_en'].' ticket tier',
                 'price' => $tier['price'],
-                'currency' => 'SAR',
+                'currency' => 'EGP',
                 'workshop_slot_count' => $tier['slots'],
                 'sort_order' => $i,
                 'is_active' => true,
             ]);
+            foreach ($tier['features'] as $j => $feature) {
+                TicketTypeFeature::create([
+                    'ticket_type_id' => $ticketType->id,
+                    'text_ar' => $feature['ar'],
+                    'text_en' => $feature['en'],
+                    'sort_order' => $j,
+                ]);
+            }
         }
 
         $workshop = Workshop::create([
@@ -131,9 +208,11 @@ class CcsEventSeeder extends Seeder
 
         $content = [
             [LandingPageSection::Hero, 'headline', 'قمة صناع المحتوى ٢٠٢٦', 'Content Creators Summit 2026'],
-            [LandingPageSection::About, 'body', 'قمة صناع المحتوى هي ملتقى محترفي المحتوى الرقمي.', 'Content Creators Summit is where digital content professionals meet.'],
-            [LandingPageSection::Location, 'intro', 'يقام الحدث في مركز المؤتمرات بالرياض.', 'The event takes place at the Convention Center in Riyadh.'],
+            [LandingPageSection::About, 'body', 'قمة صناع المحتوى هي ملتقى محترفي المحتوى الرقمي في مصر والمنطقة العربية.', 'Content Creators Summit is where digital content professionals from Egypt and the region meet.'],
+            [LandingPageSection::Location, 'intro', 'يقام الحدث في مركز القاهرة الدولي للمؤتمرات.', 'The event takes place at the Cairo International Convention Centre.'],
             [LandingPageSection::AwardsTeaser, 'blurb', 'صوّت لصانع المحتوى المفضل لديك قريبًا.', 'Vote for your favorite content creator — coming soon.'],
+            [LandingPageSection::Stats, 'attendees_count', '٢٬٥٠٠+', '2,500+'],
+            [LandingPageSection::Stats, 'countries_count', '١٢', '12'],
         ];
         foreach ($content as [$section, $key, $ar, $en]) {
             LandingPageContent::create([
@@ -142,6 +221,44 @@ class CcsEventSeeder extends Seeder
                 'field_key' => $key,
                 'value_ar' => $ar,
                 'value_en' => $en,
+            ]);
+        }
+
+        $testimonials = [
+            [
+                'quote_ar' => 'قمة صناع المحتوى غيّرت الطريقة التي أفكر بها في عملي كصانع محتوى.',
+                'quote_en' => 'CCS changed how I think about my work as a content creator.',
+                'name_ar' => 'سارة محمود',
+                'name_en' => 'Sara Mahmoud',
+                'title_ar' => 'صانعة محتوى مستقلة',
+                'title_en' => 'Independent Creator',
+            ],
+            [
+                'quote_ar' => 'ورش العمل كانت عملية جدًا ومليئة بالخبرات الحقيقية.',
+                'quote_en' => 'The workshops were hands-on and full of real experience.',
+                'name_ar' => 'أحمد فتحي',
+                'name_en' => 'Ahmed Fathy',
+                'title_ar' => 'مدير تسويق محتوى',
+                'title_en' => 'Content Marketing Lead',
+            ],
+            [
+                'quote_ar' => 'خرجت من القمة بعلاقات وشراكات حقيقية لعملي.',
+                'quote_en' => 'I left the summit with real partnerships for my work.',
+                'name_ar' => 'مريم حسن',
+                'name_en' => 'Mariam Hassan',
+                'title_ar' => 'مؤسسة استوديو إبداعي',
+                'title_en' => 'Founder, Creative Studio',
+            ],
+        ];
+        foreach ($testimonials as $i => $testimonial) {
+            Testimonial::create([...$testimonial, 'event_id' => $event->id, 'sort_order' => $i]);
+        }
+
+        foreach (range(1, 6) as $i) {
+            GalleryPhoto::create([
+                'event_id' => $event->id,
+                'image_path' => "https://picsum.photos/seed/ccs-gallery-{$i}/800/800",
+                'sort_order' => $i,
             ]);
         }
     }

@@ -15,17 +15,24 @@ class Event extends Model
 {
     use HasFactory;
 
+    /** @var list<string> The landing page sections an admin can independently show or hide. Hero is not included — it always renders. */
+    public const TOGGLEABLE_SECTIONS = [
+        'about', 'stats', 'speakers', 'workshops', 'agenda-teaser', 'tickets',
+        'awards', 'gallery', 'testimonials', 'partners', 'faq', 'location', 'contact', 'newsletter',
+    ];
+
     protected $fillable = [
         'slug', 'name_ar', 'name_en', 'tagline_ar', 'tagline_en',
         'start_date', 'end_date',
         'venue_name_ar', 'venue_name_en', 'venue_address_ar', 'venue_address_en',
-        'map_embed_url', 'status',
+        'map_embed_url', 'status', 'visible_sections',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'status' => EventStatus::class,
+        'visible_sections' => 'array',
     ];
 
     public function getRouteKeyName(): string
@@ -92,6 +99,15 @@ class Event extends Model
     {
         return $this->landingPageContent
             ->first(fn (LandingPageContent $content) => $content->section === $section && $content->field_key === $fieldKey);
+    }
+
+    /**
+     * Whether a toggleable landing page section should render for this event.
+     * Defaults to true (visible) when the event has no explicit preference stored yet.
+     */
+    public function isSectionVisible(string $section): bool
+    {
+        return (bool) ($this->visible_sections[$section] ?? true);
     }
 
     protected static function newFactory(): EventFactory

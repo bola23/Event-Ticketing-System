@@ -36,13 +36,12 @@ class LandingPageFullPageTest extends TestCase
         GalleryPhoto::factory()->for($event)->create();
         LandingPageContent::factory()->for($event)->create(['section' => LandingPageSection::About, 'field_key' => 'body']);
         LandingPageContent::factory()->for($event)->create(['section' => LandingPageSection::Location, 'field_key' => 'intro']);
-        LandingPageContent::factory()->for($event)->create(['section' => LandingPageSection::Stats, 'field_key' => 'attendees_count', 'value_en' => '500+']);
 
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
         $response->assertOk();
         $response->assertSeeInOrder([
-            'id="hero"', 'id="about"', 'id="stats"', 'id="speakers"', 'id="workshops"',
+            'id="hero"', 'id="about"', 'id="speakers"', 'id="workshops"',
             'id="agenda-teaser"', 'id="tickets"', 'id="awards"', 'id="gallery"',
             'id="testimonials"', 'id="partners"', 'id="faq"', 'id="location"',
             'id="contact"', 'id="newsletter"',

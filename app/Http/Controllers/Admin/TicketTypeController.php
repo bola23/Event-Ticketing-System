@@ -26,7 +26,11 @@ class TicketTypeController extends Controller
 
     public function store(TicketTypeRequest $request, Event $event): RedirectResponse
     {
-        $event->ticketTypes()->create($request->validated());
+        $data = $request->validated();
+        $features = $this->extractFeatures($data);
+
+        $ticketType = $event->ticketTypes()->create($data);
+        $this->syncFeatures($ticketType, $features);
 
         return redirect()->route('admin.events.ticket-types.index', $event);
     }
@@ -41,7 +45,12 @@ class TicketTypeController extends Controller
     public function update(TicketTypeRequest $request, Event $event, TicketType $ticketType): RedirectResponse
     {
         $this->assertBelongsToEvent($event, $ticketType);
-        $ticketType->update($request->validated());
+
+        $data = $request->validated();
+        $features = $this->extractFeatures($data);
+
+        $ticketType->update($data);
+        $this->syncFeatures($ticketType, $features);
 
         return redirect()->route('admin.events.ticket-types.index', $event);
     }
@@ -58,6 +67,36 @@ class TicketTypeController extends Controller
     {
         if ($ticketType->event_id !== $event->id) {
             throw new NotFoundHttpException;
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array{ar: list<string>, en: list<string>}
+     */
+    private function extractFeatures(array &$data): array
+    {
+        $featuresAr = array_values(array_filter(array_map('trim', explode("\n", $data['features_ar'] ?? ''))));
+        $featuresEn = array_values(array_filter(array_map('trim', explode("\n", $data['features_en'] ?? ''))));
+        unset($data['features_ar'], $data['features_en']);
+
+        return ['ar' => $featuresAr, 'en' => $featuresEn];
+    }
+
+    /**
+     * @param  array{ar: list<string>, en: list<string>}  $features
+     */
+    private function syncFeatures(TicketType $ticketType, array $features): void
+    {
+        $ticketType->features()->delete();
+
+        $count = max(count($features['ar']), count($features['en']));
+        for ($i = 0; $i < $count; $i++) {
+            $ticketType->features()->create([
+                'text_ar' => $features['ar'][$i] ?? '',
+                'text_en' => $features['en'][$i] ?? '',
+                'sort_order' => $i,
+            ]);
         }
     }
 }

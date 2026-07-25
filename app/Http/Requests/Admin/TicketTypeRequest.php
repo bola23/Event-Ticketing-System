@@ -20,6 +20,8 @@ class TicketTypeRequest extends FormRequest
             'name_en' => ['required', 'string', 'max:255'],
             'description_ar' => ['nullable', 'string'],
             'description_en' => ['nullable', 'string'],
+            'features_ar' => ['nullable', 'string'],
+            'features_en' => ['nullable', 'string'],
             'price' => ['required', 'integer', 'min:0'],
             'currency' => ['required', 'string', 'size:3'],
             'workshop_slot_count' => ['nullable', 'integer', 'min:0'],

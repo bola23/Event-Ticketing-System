@@ -45,6 +45,50 @@ class TicketTypeCrudTest extends TestCase
         $this->assertDatabaseHas('ticket_types', ['event_id' => $event->id, 'workshop_slot_count' => 0]);
     }
 
+    public function test_admin_can_create_a_ticket_type_with_features(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+
+        $response = $this->actingAs($admin)->post(route('admin.events.ticket-types.store', $event), [
+            'name_ar' => 'عام', 'name_en' => 'General',
+            'price' => 300, 'currency' => 'EGP',
+            'features_ar' => "دخول كامل\nجلسات",
+            'features_en' => "Full access\nSessions",
+            'sort_order' => 0, 'is_active' => 1,
+        ]);
+
+        $response->assertRedirect(route('admin.events.ticket-types.index', $event));
+        $ticketType = TicketType::where('name_en', 'General')->firstOrFail();
+        $this->assertSame(2, $ticketType->features()->count());
+        $this->assertDatabaseHas('ticket_type_features', [
+            'ticket_type_id' => $ticketType->id, 'text_en' => 'Full access', 'sort_order' => 0,
+        ]);
+        $this->assertDatabaseHas('ticket_type_features', [
+            'ticket_type_id' => $ticketType->id, 'text_en' => 'Sessions', 'sort_order' => 1,
+        ]);
+    }
+
+    public function test_updating_a_ticket_type_replaces_its_features(): void
+    {
+        $admin = User::factory()->create();
+        $event = Event::factory()->create();
+        $ticketType = TicketType::factory()->for($event)->create();
+        $ticketType->features()->create(['text_ar' => 'قديم', 'text_en' => 'Old feature', 'sort_order' => 0]);
+
+        $response = $this->actingAs($admin)->put(route('admin.events.ticket-types.update', [$event, $ticketType]), [
+            'name_ar' => $ticketType->name_ar, 'name_en' => $ticketType->name_en,
+            'price' => $ticketType->price, 'currency' => $ticketType->currency,
+            'features_ar' => 'جديد', 'features_en' => 'New feature',
+            'sort_order' => 0, 'is_active' => 1,
+        ]);
+
+        $response->assertRedirect(route('admin.events.ticket-types.index', $event));
+        $this->assertSame(1, $ticketType->features()->count());
+        $this->assertDatabaseHas('ticket_type_features', ['ticket_type_id' => $ticketType->id, 'text_en' => 'New feature']);
+        $this->assertDatabaseMissing('ticket_type_features', ['ticket_type_id' => $ticketType->id, 'text_en' => 'Old feature']);
+    }
+
     public function test_creating_a_ticket_type_requires_a_price(): void
     {
         $admin = User::factory()->create();

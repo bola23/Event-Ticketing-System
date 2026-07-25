@@ -31,7 +31,7 @@ class ContactMessageIndexTest extends TestCase
         $admin = User::factory()->create();
         $event = Event::factory()->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.events.contact-messages.index', $event));
+        $response = $this->actingAs($admin)->get(route('admin.events.contact-messages.index', $event).'?lang=en');
 
         $response->assertOk();
         $response->assertSee('No messages yet.');

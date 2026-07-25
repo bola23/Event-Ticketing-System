@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LandingPageContentRequest extends FormRequest
 {
@@ -28,6 +30,8 @@ class LandingPageContentRequest extends FormRequest
             'stats_attendees_count_en' => ['nullable', 'string', 'max:50'],
             'stats_countries_count_ar' => ['nullable', 'string', 'max:50'],
             'stats_countries_count_en' => ['nullable', 'string', 'max:50'],
+            'visible_sections' => ['nullable', 'array'],
+            'visible_sections.*' => [Rule::in(Event::TOGGLEABLE_SECTIONS)],
         ];
     }
 }

@@ -211,6 +211,17 @@ class LandingPageTest extends TestCase
         $response->assertSee('Unlimited workshops');
     }
 
+    public function test_tickets_section_lists_features(): void
+    {
+        $event = Event::factory()->create();
+        $ticketType = TicketType::factory()->for($event)->create(['name_en' => 'General']);
+        $ticketType->features()->create(['text_ar' => 'دخول كامل', 'text_en' => 'Full event access', 'sort_order' => 0]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('Full event access');
+    }
+
     public function test_gallery_section_lists_photos(): void
     {
         $event = Event::factory()->create();

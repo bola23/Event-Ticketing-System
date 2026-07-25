@@ -32,7 +32,17 @@ class LandingPageContentController extends Controller
             $values[$prefix.'_en'] = $content?->value_en;
         }
 
-        return view('admin.landing-page-content.edit', ['event' => $event, 'values' => $values]);
+        $visibleSections = array_values(array_filter(
+            Event::TOGGLEABLE_SECTIONS,
+            fn (string $section) => $event->isSectionVisible($section),
+        ));
+
+        return view('admin.landing-page-content.edit', [
+            'event' => $event,
+            'values' => $values,
+            'sections' => Event::TOGGLEABLE_SECTIONS,
+            'visibleSections' => $visibleSections,
+        ]);
     }
 
     public function update(LandingPageContentRequest $request, Event $event): RedirectResponse
@@ -45,6 +55,13 @@ class LandingPageContentController extends Controller
                 ['value_ar' => $data[$prefix.'_ar'] ?? null, 'value_en' => $data[$prefix.'_en'] ?? null],
             );
         }
+
+        $checkedSections = $data['visible_sections'] ?? [];
+        $visibleSections = [];
+        foreach (Event::TOGGLEABLE_SECTIONS as $section) {
+            $visibleSections[$section] = in_array($section, $checkedSections, true);
+        }
+        $event->update(['visible_sections' => $visibleSections]);
 
         return redirect()->route('admin.events.content.edit', $event);
     }
