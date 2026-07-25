@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GalleryPhotoController;
 use App\Http\Controllers\Admin\LandingPageContentController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController as AdminNewsletterSubscriberController;
 use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AwardsController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\NewsletterSubscriberController;
 use App\Http\Controllers\TicketRequestController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Middleware\EnsureEventIsPublished;
@@ -34,6 +36,7 @@ Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->grou
     Route::get('/workshops/{workshop}', [WorkshopController::class, 'show'])->name('workshops.show');
     Route::get('/request', [TicketRequestController::class, 'create'])->name('ticket-requests.create');
     Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
+    Route::post('/newsletter', [NewsletterSubscriberController::class, 'store'])->name('newsletter.store');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -58,6 +61,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->parameters(['gallery-photos' => 'galleryPhoto']);
         Route::resource('events.testimonials', TestimonialController::class)->except('show');
         Route::get('events/{event}/contact-messages', [AdminContactMessageController::class, 'index'])->name('events.contact-messages.index');
+        Route::get('events/{event}/newsletter-subscribers', [AdminNewsletterSubscriberController::class, 'index'])->name('events.newsletter-subscribers.index');
         Route::resource('events.faqs', FaqController::class)->except('show');
         Route::get('events/{event}/content', [LandingPageContentController::class, 'edit'])->name('events.content.edit');
         Route::put('events/{event}/content', [LandingPageContentController::class, 'update'])->name('events.content.update');

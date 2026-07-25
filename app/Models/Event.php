@@ -78,6 +78,11 @@ class Event extends Model
         return $this->hasMany(ContactMessage::class)->latest();
     }
 
+    public function newsletterSubscribers(): HasMany
+    {
+        return $this->hasMany(NewsletterSubscriber::class)->latest();
+    }
+
     public function landingPageContent(): HasMany
     {
         return $this->hasMany(LandingPageContent::class);

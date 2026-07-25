@@ -34,6 +34,7 @@
                         ['prefix' => 'admin.events.gallery-photos', 'route' => 'admin.events.gallery-photos.index', 'label' => __('Gallery')],
                         ['prefix' => 'admin.events.testimonials', 'route' => 'admin.events.testimonials.index', 'label' => __('Testimonials')],
                         ['prefix' => 'admin.events.contact-messages', 'route' => 'admin.events.contact-messages.index', 'label' => __('Contact Messages')],
+                        ['prefix' => 'admin.events.newsletter-subscribers', 'route' => 'admin.events.newsletter-subscribers.index', 'label' => __('Newsletter')],
                         ['prefix' => 'admin.events.faqs', 'route' => 'admin.events.faqs.index', 'label' => __('FAQs')],
                         ['prefix' => 'admin.events.content', 'route' => 'admin.events.content.edit', 'label' => __('Content')],
                     ];

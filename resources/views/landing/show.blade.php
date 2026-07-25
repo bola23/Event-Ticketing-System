@@ -18,5 +18,6 @@
     @include('landing.partials.faq', ['event' => $event])
     @include('landing.partials.location', ['event' => $event])
     @include('landing.partials.contact', ['event' => $event])
+    @include('landing.partials.newsletter', ['event' => $event])
     @include('landing.partials.footer', ['event' => $event])
 @endsection
