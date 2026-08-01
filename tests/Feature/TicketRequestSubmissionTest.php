@@ -168,6 +168,18 @@ class TicketRequestSubmissionTest extends TestCase
         $response->assertSessionHasErrors('name');
     }
 
+    public function test_name_with_digits_is_rejected(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $ticketType = TicketType::factory()->for($event)->create();
+
+        $response = $this->post(route('ticket-requests.store', $event), [
+            'ticket_type_id' => $ticketType->id, 'name' => 'Kareem123', 'email' => 'test@example.com', 'phone' => '+201001234567',
+        ]);
+
+        $response->assertSessionHasErrors('name');
+    }
+
     public function test_required_dynamic_field_is_enforced(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Published]);

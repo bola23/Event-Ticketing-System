@@ -71,19 +71,12 @@ if (ticketRequestForm) {
                         errorEl.classList.remove('hidden');
                     }
                 });
-                if (feedback) {
-                    feedback.textContent = data.message || genericError;
-                    feedback.className = 'text-sm font-bold mb-4 text-red-400';
-                }
             } else if (response.ok) {
                 if (feedback) {
                     feedback.textContent = data.message || '';
                     feedback.className = 'text-sm font-bold mb-4 text-ccs-teal-light';
                 }
                 ticketRequestForm.reset();
-                setTimeout(() => {
-                    Alpine.store('ticketRequest').open = false;
-                }, 2500);
             } else {
                 if (feedback) {
                     feedback.textContent = data.message || genericError;

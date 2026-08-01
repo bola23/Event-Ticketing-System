@@ -46,6 +46,7 @@
             enctype="multipart/form-data"
             class="flex flex-col gap-4"
             data-generic-error="{{ __('Something went wrong. Please try again.') }}"
+            novalidate
         >
             @csrf
 
