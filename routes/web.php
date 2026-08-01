@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\NewsletterSubscriberController as AdminNewsletter
 use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\TicketRequestFieldController;
 use App\Http\Controllers\Admin\TicketTypeController;
 use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\AgendaController;
@@ -63,6 +64,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('events/{event}/contact-messages', [AdminContactMessageController::class, 'index'])->name('events.contact-messages.index');
         Route::get('events/{event}/newsletter-subscribers', [AdminNewsletterSubscriberController::class, 'index'])->name('events.newsletter-subscribers.index');
         Route::resource('events.faqs', FaqController::class)->except('show');
+        Route::resource('events.request-form-fields', TicketRequestFieldController::class)
+            ->except('show')
+            ->parameters(['request-form-fields' => 'requestField']);
         Route::get('events/{event}/content', [LandingPageContentController::class, 'edit'])->name('events.content.edit');
         Route::put('events/{event}/content', [LandingPageContentController::class, 'update'])->name('events.content.update');
     });
