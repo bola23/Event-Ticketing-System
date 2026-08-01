@@ -7,6 +7,7 @@ namespace App\Http\Requests;
 use App\Enums\TicketRequestFieldType;
 use App\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Propaganistas\LaravelPhone\Rules\Phone;
 
 class TicketRequestStoreRequest extends FormRequest
@@ -18,15 +19,19 @@ class TicketRequestStoreRequest extends FormRequest
 
     public function rules(): array
     {
+        /** @var Event $event */
+        $event = $this->route('event');
+
         $rules = [
-            'ticket_type_id' => ['required', 'integer', 'exists:ticket_types,id'],
+            'ticket_type_id' => [
+                'required',
+                'integer',
+                Rule::exists('ticket_types', 'id')->where('event_id', $event->id)->where('is_active', true),
+            ],
             'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\pM\s\'\-\.]+$/u'],
             'email' => ['required', 'email:rfc', 'max:255'],
             'phone' => ['required', (new Phone)->international()],
         ];
-
-        /** @var Event $event */
-        $event = $this->route('event');
 
         foreach ($event->ticketRequestFields as $field) {
             $inputKey = 'field_'.$field->id;

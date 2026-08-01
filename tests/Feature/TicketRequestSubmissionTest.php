@@ -58,6 +58,32 @@ class TicketRequestSubmissionTest extends TestCase
         $this->assertNull($ticket->checked_in_at);
     }
 
+    public function test_ticket_type_from_a_different_event_is_rejected(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $otherEvent = Event::factory()->create();
+        $foreignTicketType = TicketType::factory()->for($otherEvent)->create();
+
+        $response = $this->post(route('ticket-requests.store', $event), [
+            'ticket_type_id' => $foreignTicketType->id, 'name' => 'Test', 'email' => 'test@example.com', 'phone' => '+201001234567',
+        ]);
+
+        $response->assertSessionHasErrors('ticket_type_id');
+        $this->assertDatabaseMissing('tickets', ['email' => 'test@example.com']);
+    }
+
+    public function test_inactive_ticket_type_is_rejected(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $ticketType = TicketType::factory()->for($event)->create(['is_active' => false]);
+
+        $response = $this->post(route('ticket-requests.store', $event), [
+            'ticket_type_id' => $ticketType->id, 'name' => 'Test', 'email' => 'test@example.com', 'phone' => '+201001234567',
+        ]);
+
+        $response->assertSessionHasErrors('ticket_type_id');
+    }
+
     public function test_invalid_email_is_rejected(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Published]);
