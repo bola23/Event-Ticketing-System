@@ -8,8 +8,8 @@
         <a href="{{ route('agenda.show', $event) }}" class="hover:text-white transition-colors">{{ __('Agenda') }}</a>
         <a href="{{ $sectionBase }}#speakers" class="hover:text-white transition-colors">{{ __('Speakers') }}</a>
         <a href="{{ $sectionBase }}#workshops" class="hover:text-white transition-colors">{{ __('Workshops') }}</a>
-        <a href="{{ $sectionBase }}#awards" class="hover:text-white transition-colors">{{ __('Awards') }}</a>
         <a href="{{ $sectionBase }}#tickets" class="hover:text-white transition-colors">{{ __('Tickets') }}</a>
+        <a href="{{ $sectionBase }}#awards" class="hover:text-white transition-colors">{{ __('Awards') }}</a>
         <a href="{{ $sectionBase }}#partners" class="hover:text-white transition-colors">{{ __('Sponsors') }}</a>
         <a href="{{ $sectionBase }}#faq" class="hover:text-white transition-colors">{{ __('FAQs') }}</a>
     </nav>
