@@ -1,7 +1,20 @@
 import Alpine from 'alpinejs';
+import intlTelInput from 'intl-tel-input/intlTelInputWithUtils';
+import 'intl-tel-input/styles';
 
 window.Alpine = Alpine;
 Alpine.start();
+
+const phoneInput = document.querySelector('#phone');
+if (phoneInput) {
+    const iti = intlTelInput(phoneInput, {
+        initialCountry: 'eg',
+    });
+
+    phoneInput.closest('form')?.addEventListener('submit', () => {
+        phoneInput.value = iti.getNumber();
+    });
+}
 
 if ('IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver((entries) => {

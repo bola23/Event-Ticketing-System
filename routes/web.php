@@ -36,6 +36,7 @@ Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->grou
     Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
     Route::get('/workshops/{workshop}', [WorkshopController::class, 'show'])->name('workshops.show');
     Route::get('/request', [TicketRequestController::class, 'create'])->name('ticket-requests.create');
+    Route::post('/request', [TicketRequestController::class, 'store'])->name('ticket-requests.store');
     Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
     Route::post('/newsletter', [NewsletterSubscriberController::class, 'store'])->name('newsletter.store');
 });
