@@ -5,17 +5,17 @@ directory for scope). Reflects actual code in the repo, not intent — re-verify
 models before trusting this after major work lands, since it goes stale the moment new code
 ships without an update here.
 
-Last verified: 2026-07-25 (routes, models, controllers, migrations inspected directly).
+Last verified: 2026-08-01 (routes, models, controllers, migrations inspected directly).
 
 ## At a glance
 
 | # | Phase | Status |
 |---|-------|--------|
 | 01 | Project Setup | ✅ Done |
-| 02 | Database Design | 🟡 Partial — core content schema done, ticket workflow schema missing |
-| 03 | Admin Panel | 🟡 Partial — CMS/content CRUD done, approvals/coupons/reports missing |
+| 02 | Database Design | 🟡 Partial — content + core ticket workflow schema done, booking/coupons/awards schema missing |
+| 03 | Admin Panel | 🟡 Partial — CMS/content CRUD and ticket request approvals done, coupons/reports missing |
 | 04 | Landing Page | ✅ Done |
-| 05 | Ticket Request | 🔴 Barely started — form UI only, no submission or workflow |
+| 05 | Ticket Request | 🟡 Partial — request, review, approve/reject built; payment-link email waits on Payment |
 | 06 | Payment | ⬜ Not started |
 | 07 | Workshops | 🟡 Partial — browsing built, booking flow missing |
 | 08 | Awards | 🟡 Partial — teaser/page shell built, voting missing |
@@ -38,8 +38,9 @@ Tailwind CSS + AlpineJS instead (see `.claude/CLAUDE.md`). Doc updated to match 
 - [x] Events, Speakers, Sponsors, TicketTypes (+ TicketTypeFeatures), Workshops, AgendaItems,
       Faqs, LandingPageContent, GalleryPhotos, Testimonials, ContactMessages,
       NewsletterSubscribers
-- [ ] Ticket (attendee ticket + workflow state: Pending → Approved/Rejected → Payment Pending
-      → Paid → Ticket Issued → Checked In → Cancelled)
+- [x] Ticket (attendee ticket + workflow state: Pending → Approved/Rejected → Payment Pending
+      → Paid → Ticket Issued → Checked In → Cancelled — only the first four states are set by
+      anything yet), `TicketRequestField`, `TicketRequestAnswer`
 - [ ] WorkshopBooking (slot-based booking keyed by Ticket ID + Workshop Booking Key)
 - [ ] DiscountCoupon
 - [ ] Award / AwardVote
@@ -59,8 +60,9 @@ Tailwind CSS + AlpineJS instead (see `.claude/CLAUDE.md`). Doc updated to match 
 - [x] Landing Page Content CMS, including per-section show/hide toggles
 - [x] Contact Messages (read-only index)
 - [x] Newsletter Subscribers (read-only index)
+- [x] Ticket Request Form field builder (per-event Instagram/Portfolio/CV toggles)
+- [x] Ticket Request review/approve/reject queue (with rejection email)
 - [ ] Discount Coupons admin
-- [ ] Ticket Request review/approve/reject queue
 - [ ] Per-event Reports screen
 
 ## 04 — Landing Page
@@ -78,10 +80,13 @@ sections/content), not foundational.
 ## 05 — Ticket Request
 
 - [x] Public request form UI (`GET /events/{event}/request`), pre-selects a ticket type
-- [ ] `Ticket` model + migration
-- [ ] Form submission endpoint (`POST`) that creates a Ticket in Pending status
-- [ ] Admin review screen with Approve / Reject actions
-- [ ] Approval email with payment link; rejection is terminal
+- [x] Dynamic, admin-configurable extra fields (Instagram, Portfolio [URL or PDF], CV upload)
+      alongside fixed Name/Email/Phone, with server-side validation and private file storage
+- [x] `Ticket` model + migration (plus `TicketRequestField`, `TicketRequestAnswer`)
+- [x] Form submission endpoint (`POST`) that creates a Ticket in Pending status
+- [x] Admin review screen with Approve / Reject actions
+- [x] Reject sends a rejection email; Approve moves the ticket to Payment Pending — no email yet
+      since there's no real payment link until Payment (Phase 06) exists
 
 ## 06 — Payment
 
