@@ -52,13 +52,15 @@
 
             <div>
                 <label for="ticket_type_id" class="block text-sm text-gray-300 mb-1">{{ __('Ticket Type') }}</label>
-                <select id="ticket_type_id" name="ticket_type_id" x-model="$store.ticketRequest.ticketTypeId" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
-                    @foreach($event->ticketTypes->where('is_active', true) as $ticketType)
-                        <option value="{{ $ticketType->id }}">
-                            {{ app()->getLocale() === 'ar' ? $ticketType->name_ar : $ticketType->name_en }} — {{ $ticketType->price }} {{ $ticketType->currency }}
-                        </option>
-                    @endforeach
-                </select>
+                <x-nice-select
+                    id="ticket_type_id"
+                    name="ticket_type_id"
+                    model="$store.ticketRequest.ticketTypeId"
+                    :options="$event->ticketTypes->where('is_active', true)->map(fn ($ticketType) => [
+                        'value' => (string) $ticketType->id,
+                        'label' => (app()->getLocale() === 'ar' ? $ticketType->name_ar : $ticketType->name_en).' — '.$ticketType->price.' '.$ticketType->currency,
+                    ])->values()->all()"
+                />
                 <p id="error-ticket_type_id" class="text-red-400 text-sm mt-1 {{ $errors->has('ticket_type_id') ? '' : 'hidden' }}">{{ $errors->first('ticket_type_id') }}</p>
             </div>
 

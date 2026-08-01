@@ -32,6 +32,28 @@ if (phoneInput) {
     });
 }
 
+function filterInputCharacters(inputEl, disallowedPattern) {
+    inputEl.addEventListener('input', () => {
+        const cursorPos = inputEl.selectionStart;
+        const originalLength = inputEl.value.length;
+        inputEl.value = inputEl.value.replace(disallowedPattern, '');
+        const removed = originalLength - inputEl.value.length;
+        const newCursorPos = Math.max(0, cursorPos - removed);
+        inputEl.setSelectionRange(newCursorPos, newCursorPos);
+    });
+}
+
+const nameInput = document.querySelector('#name');
+if (nameInput) {
+    // Mirrors the server-side regex: unicode letters/marks, spaces, apostrophe, hyphen, period only.
+    filterInputCharacters(nameInput, /[^\p{L}\p{M}\s'\-.]/gu);
+}
+
+const emailInput = document.querySelector('#email');
+if (emailInput) {
+    filterInputCharacters(emailInput, /[^a-zA-Z0-9@._%+\-]/g);
+}
+
 const ticketRequestForm = document.getElementById('ticket-request-form');
 if (ticketRequestForm) {
     ticketRequestForm.addEventListener('submit', async (event) => {

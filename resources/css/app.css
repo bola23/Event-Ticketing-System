@@ -140,6 +140,8 @@ h1, h2, h3, h4, h5, .font-display {
   --iti-border-color: rgba(255, 255, 255, 0.2);
   --iti-country-selector-bg: transparent;
   --iti-icon-color: #9ca3af;
+  display: block;
+  width: 100%;
 }
 
 .iti--detached-country-selector {
