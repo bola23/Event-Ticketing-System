@@ -90,6 +90,16 @@ class Event extends Model
         return $this->hasMany(NewsletterSubscriber::class)->latest();
     }
 
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function ticketRequestFields(): HasMany
+    {
+        return $this->hasMany(TicketRequestField::class)->orderBy('sort_order');
+    }
+
     public function landingPageContent(): HasMany
     {
         return $this->hasMany(LandingPageContent::class);
