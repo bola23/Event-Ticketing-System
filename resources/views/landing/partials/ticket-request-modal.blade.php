@@ -21,12 +21,12 @@
 
     <div
         class="relative bg-ccs-black border border-white/10 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
+        x-transition:enter="transition-opacity ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-opacity ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
     >
         <div class="flex items-center justify-between mb-6">
             <h2 class="font-display text-xl font-bold">{{ __('Request Your Ticket') }}</h2>

@@ -23,8 +23,20 @@ window.addEventListener('keydown', (event) => {
 
 const phoneInput = document.querySelector('#phone');
 if (phoneInput) {
+    const isArabic = document.documentElement.lang === 'ar';
+
     const iti = intlTelInput(phoneInput, {
         initialCountry: 'eg',
+        ...(isArabic && {
+            uiTranslations: {
+                searchPlaceholder: 'بحث',
+                clearSearchAriaLabel: 'مسح البحث',
+                countryListAriaLabel: 'قائمة الدول',
+                noCountrySelected: 'لم يتم اختيار دولة',
+                searchEmptyState: 'لا توجد نتائج',
+                selectedCountryAriaLabel: 'الدولة المختارة',
+            },
+        }),
     });
 
     phoneInput.closest('form')?.addEventListener('submit', () => {
