@@ -41,6 +41,41 @@ class TicketRequestSubmissionTest extends TestCase
         $this->assertSame('CCS2026-'.str_pad((string) $ticket->id, 6, '0', STR_PAD_LEFT), $ticket->ticket_number);
     }
 
+    public function test_ajax_valid_submission_returns_json_success_message(): void
+    {
+        Storage::fake('local');
+        $event = Event::factory()->create(['status' => EventStatus::Published, 'slug' => 'ccs-2026']);
+        $ticketType = TicketType::factory()->for($event)->create();
+
+        $response = $this->postJson(route('ticket-requests.store', $event).'?lang=en', [
+            'ticket_type_id' => $ticketType->id,
+            'name' => 'Kareem Al-Sayed',
+            'email' => 'kareem@example.com',
+            'phone' => '+201001234567',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonStructure(['message']);
+        $ticket = Ticket::where('email', 'kareem@example.com')->firstOrFail();
+        $response->assertJson(['message' => "Request received! Your reference number is {$ticket->ticket_number}."]);
+    }
+
+    public function test_ajax_invalid_submission_returns_json_validation_errors(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $ticketType = TicketType::factory()->for($event)->create();
+
+        $response = $this->postJson(route('ticket-requests.store', $event), [
+            'ticket_type_id' => $ticketType->id,
+            'name' => '',
+            'email' => 'not-an-email',
+            'phone' => 'not-a-phone',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name', 'email', 'phone']);
+    }
+
     public function test_forward_looking_columns_stay_unset_after_submission(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Published]);
@@ -106,6 +141,19 @@ class TicketRequestSubmissionTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('phone');
+    }
+
+    public function test_invalid_phone_error_message_is_translated_not_a_raw_key(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $ticketType = TicketType::factory()->for($event)->create();
+
+        $response = $this->postJson(route('ticket-requests.store', $event).'?lang=en', [
+            'ticket_type_id' => $ticketType->id, 'name' => 'Test', 'email' => 'test@example.com', 'phone' => 'not-a-phone',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('errors.phone.0', 'The phone must be a valid phone number.');
     }
 
     public function test_name_with_html_tags_is_rejected(): void

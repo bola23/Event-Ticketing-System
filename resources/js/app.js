@@ -32,6 +32,76 @@ if (phoneInput) {
     });
 }
 
+const ticketRequestForm = document.getElementById('ticket-request-form');
+if (ticketRequestForm) {
+    ticketRequestForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const feedback = document.getElementById('ticket-request-feedback');
+        const submitButton = ticketRequestForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        const genericError = ticketRequestForm.dataset.genericError;
+
+        ticketRequestForm.querySelectorAll('[id^="error-"]').forEach((el) => {
+            el.textContent = '';
+            el.classList.add('hidden');
+        });
+        if (feedback) {
+            feedback.textContent = '';
+            feedback.classList.add('hidden');
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = '...';
+
+        try {
+            const response = await fetch(ticketRequestForm.action, {
+                method: 'POST',
+                body: new FormData(ticketRequestForm),
+                headers: { Accept: 'application/json' },
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (response.status === 422) {
+                Object.entries(data.errors ?? {}).forEach(([field, messages]) => {
+                    const errorEl = document.getElementById('error-' + field);
+                    if (errorEl) {
+                        errorEl.textContent = messages[0];
+                        errorEl.classList.remove('hidden');
+                    }
+                });
+                if (feedback) {
+                    feedback.textContent = data.message || genericError;
+                    feedback.className = 'text-sm font-bold mb-4 text-red-400';
+                }
+            } else if (response.ok) {
+                if (feedback) {
+                    feedback.textContent = data.message || '';
+                    feedback.className = 'text-sm font-bold mb-4 text-ccs-teal-light';
+                }
+                ticketRequestForm.reset();
+                setTimeout(() => {
+                    Alpine.store('ticketRequest').open = false;
+                }, 2500);
+            } else {
+                if (feedback) {
+                    feedback.textContent = data.message || genericError;
+                    feedback.className = 'text-sm font-bold mb-4 text-red-400';
+                }
+            }
+        } catch (error) {
+            if (feedback) {
+                feedback.textContent = genericError;
+                feedback.className = 'text-sm font-bold mb-4 text-red-400';
+            }
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+        }
+    });
+}
+
 if ('IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {

@@ -148,6 +148,7 @@ h1, h2, h3, h4, h5, .font-display {
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 9999 !important;
 }
 
 .iti__search-input {

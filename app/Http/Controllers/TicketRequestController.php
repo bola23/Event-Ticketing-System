@@ -10,13 +10,14 @@ use App\Http\Requests\TicketRequestStoreRequest;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\TicketRequestField;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TicketRequestController extends Controller
 {
-    public function store(TicketRequestStoreRequest $request, Event $event): RedirectResponse
+    public function store(TicketRequestStoreRequest $request, Event $event): RedirectResponse|JsonResponse
     {
         $validated = $request->validated();
         $fields = $event->ticketRequestFields;
@@ -38,6 +39,12 @@ class TicketRequestController extends Controller
 
             return $ticket;
         });
+
+        $message = __('Request received! Your reference number is :number.', ['number' => $ticket->ticket_number]);
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => $message]);
+        }
 
         return redirect()->to(route('landing.show', $event).'#tickets')->with('ticket_request_success', $ticket->ticket_number);
     }

@@ -68,6 +68,22 @@ class TicketRequestFormTest extends TestCase
         $response->assertDontSee('field_', false);
     }
 
+    public function test_request_modal_has_ajax_submission_hooks(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        TicketType::factory()->for($event)->create();
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertOk();
+        $response->assertSee('id="ticket-request-form"', false);
+        $response->assertSee('id="ticket-request-feedback"', false);
+        $response->assertSee('id="error-name"', false);
+        $response->assertSee('id="error-email"', false);
+        $response->assertSee('id="error-phone"', false);
+        $response->assertSee('data-generic-error=', false);
+    }
+
     public function test_request_modal_is_omitted_when_event_has_no_active_ticket_types(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Published]);

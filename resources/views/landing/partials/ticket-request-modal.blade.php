@@ -8,21 +8,45 @@
     @keydown.escape.window="$store.ticketRequest.open = false"
     class="fixed inset-0 z-100 flex items-center justify-center p-4"
 >
-    <div class="absolute inset-0 bg-black/70" @click="$store.ticketRequest.open = false"></div>
+    <div
+        class="absolute inset-0 bg-black/70"
+        @click="$store.ticketRequest.open = false"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+    ></div>
 
-    <div class="relative bg-ccs-black border border-white/10 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8" x-transition>
+    <div
+        class="relative bg-ccs-black border border-white/10 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+    >
         <div class="flex items-center justify-between mb-6">
             <h2 class="font-display text-xl font-bold">{{ __('Request Your Ticket') }}</h2>
             <button type="button" @click="$store.ticketRequest.open = false" class="text-gray-400 hover:text-white text-2xl leading-none transition-colors" aria-label="{{ __('Close') }}">&times;</button>
         </div>
 
-        @if(session('ticket_request_success'))
-            <p class="text-sm font-bold text-ccs-teal-light mb-4">
+        <p id="ticket-request-feedback" class="text-sm font-bold mb-4 {{ session('ticket_request_success') ? 'text-ccs-teal-light' : 'hidden' }}">
+            @if(session('ticket_request_success'))
                 {{ __('Request received! Your reference number is :number.', ['number' => session('ticket_request_success')]) }}
-            </p>
-        @endif
+            @endif
+        </p>
 
-        <form method="POST" action="{{ route('ticket-requests.store', $event) }}" enctype="multipart/form-data" class="flex flex-col gap-4">
+        <form
+            id="ticket-request-form"
+            method="POST"
+            action="{{ route('ticket-requests.store', $event) }}"
+            enctype="multipart/form-data"
+            class="flex flex-col gap-4"
+            data-generic-error="{{ __('Something went wrong. Please try again.') }}"
+        >
             @csrf
 
             <div>
@@ -34,25 +58,25 @@
                         </option>
                     @endforeach
                 </select>
-                @error('ticket_type_id') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                <p id="error-ticket_type_id" class="text-red-400 text-sm mt-1 {{ $errors->has('ticket_type_id') ? '' : 'hidden' }}">{{ $errors->first('ticket_type_id') }}</p>
             </div>
 
             <div>
                 <label for="name" class="block text-sm text-gray-300 mb-1">{{ __('Name') }}</label>
                 <input id="name" type="text" name="name" value="{{ old('name') }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
-                @error('name') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                <p id="error-name" class="text-red-400 text-sm mt-1 {{ $errors->has('name') ? '' : 'hidden' }}">{{ $errors->first('name') }}</p>
             </div>
 
             <div>
                 <label for="email" class="block text-sm text-gray-300 mb-1">{{ __('Email') }}</label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
-                @error('email') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                <p id="error-email" class="text-red-400 text-sm mt-1 {{ $errors->has('email') ? '' : 'hidden' }}">{{ $errors->first('email') }}</p>
             </div>
 
             <div>
                 <label for="phone" class="block text-sm text-gray-300 mb-1">{{ __('Phone') }}</label>
                 <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
-                @error('phone') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                <p id="error-phone" class="text-red-400 text-sm mt-1 {{ $errors->has('phone') ? '' : 'hidden' }}">{{ $errors->first('phone') }}</p>
             </div>
 
             @foreach($event->ticketRequestFields as $field)
@@ -65,7 +89,7 @@
 
                     @if($field->type === \App\Enums\TicketRequestFieldType::Instagram)
                         <input type="text" name="{{ $inputKey }}" value="{{ old($inputKey) }}" placeholder="@username" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
-                        @error($inputKey) <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                        <p id="error-{{ $inputKey }}" class="text-red-400 text-sm mt-1 {{ $errors->has($inputKey) ? '' : 'hidden' }}">{{ $errors->first($inputKey) }}</p>
                     @elseif($field->type === \App\Enums\TicketRequestFieldType::Portfolio)
                         <div x-data="{ mode: '{{ old($inputKey.'_mode', 'url') }}' }" class="flex flex-col gap-3">
                             <div class="flex gap-4 text-sm">
@@ -77,17 +101,17 @@
                                 <x-file-dropzone :name="$inputKey.'_file'" accept=".pdf" />
                             </div>
                         </div>
-                        @error($inputKey.'_mode') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
-                        @error($inputKey.'_url') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
-                        @error($inputKey.'_file') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                        <p id="error-{{ $inputKey }}_mode" class="text-red-400 text-sm mt-1 {{ $errors->has($inputKey.'_mode') ? '' : 'hidden' }}">{{ $errors->first($inputKey.'_mode') }}</p>
+                        <p id="error-{{ $inputKey }}_url" class="text-red-400 text-sm mt-1 {{ $errors->has($inputKey.'_url') ? '' : 'hidden' }}">{{ $errors->first($inputKey.'_url') }}</p>
+                        <p id="error-{{ $inputKey }}_file" class="text-red-400 text-sm mt-1 {{ $errors->has($inputKey.'_file') ? '' : 'hidden' }}">{{ $errors->first($inputKey.'_file') }}</p>
                     @elseif($field->type === \App\Enums\TicketRequestFieldType::Cv)
                         <x-file-dropzone :name="$inputKey" accept=".pdf,.doc,.docx" />
-                        @error($inputKey) <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
+                        <p id="error-{{ $inputKey }}" class="text-red-400 text-sm mt-1 {{ $errors->has($inputKey) ? '' : 'hidden' }}">{{ $errors->first($inputKey) }}</p>
                     @endif
                 </div>
             @endforeach
 
-            <button type="submit" class="px-6 py-3 rounded bg-ccs-red hover:bg-ccs-maroon text-white font-bold">{{ __('Submit Request') }}</button>
+            <button type="submit" class="px-6 py-3 rounded bg-ccs-red hover:bg-ccs-maroon text-white font-bold transition-opacity disabled:opacity-60">{{ __('Submit Request') }}</button>
         </form>
     </div>
 </div>
