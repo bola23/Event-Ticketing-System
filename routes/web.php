@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TicketRequestFieldController;
+use App\Http\Controllers\Admin\TicketRequestQueueController;
 use App\Http\Controllers\Admin\TicketTypeController;
 use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\AgendaController;
@@ -68,6 +69,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('events.request-form-fields', TicketRequestFieldController::class)
             ->except('show')
             ->parameters(['request-form-fields' => 'requestField']);
+        Route::get('events/{event}/ticket-requests', [TicketRequestQueueController::class, 'index'])->name('events.ticket-requests.index');
+        Route::patch('events/{event}/ticket-requests/{ticket}/approve', [TicketRequestQueueController::class, 'approve'])->name('events.ticket-requests.approve');
+        Route::patch('events/{event}/ticket-requests/{ticket}/reject', [TicketRequestQueueController::class, 'reject'])->name('events.ticket-requests.reject');
+        Route::get('events/{event}/ticket-requests/{ticket}/answers/{answer}/download', [TicketRequestQueueController::class, 'downloadAnswer'])->name('events.ticket-requests.answers.download');
         Route::get('events/{event}/content', [LandingPageContentController::class, 'edit'])->name('events.content.edit');
         Route::put('events/{event}/content', [LandingPageContentController::class, 'update'])->name('events.content.update');
     });
