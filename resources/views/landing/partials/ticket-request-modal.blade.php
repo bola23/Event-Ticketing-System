@@ -1,11 +1,20 @@
-{{-- resources/views/ticket-requests/create.blade.php --}}
-@extends('layouts.app')
+{{-- resources/views/landing/partials/ticket-request-modal.blade.php --}}
+@if($event->ticketTypes->where('is_active', true)->isNotEmpty())
+<div
+    x-data
+    x-show="$store.ticketRequest.open"
+    x-cloak
+    x-init="if (@js($errors->any())) { $store.ticketRequest.open = true; $store.ticketRequest.ticketTypeId = '{{ old('ticket_type_id') }}'; }"
+    @keydown.escape.window="$store.ticketRequest.open = false"
+    class="fixed inset-0 z-100 flex items-center justify-center p-4"
+>
+    <div class="absolute inset-0 bg-black/70" @click="$store.ticketRequest.open = false"></div>
 
-@section('title', __('Request a Ticket'))
-
-@section('content')
-    <div class="container mx-auto px-4 py-5 max-w-xl">
-        <h1 class="font-display text-2xl font-bold mb-6">{{ __('Request Your Ticket') }}</h1>
+    <div class="relative bg-ccs-black border border-white/10 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8" x-transition>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="font-display text-xl font-bold">{{ __('Request Your Ticket') }}</h2>
+            <button type="button" @click="$store.ticketRequest.open = false" class="text-gray-400 hover:text-white text-2xl leading-none transition-colors" aria-label="{{ __('Close') }}">&times;</button>
+        </div>
 
         @if(session('ticket_request_success'))
             <p class="text-sm font-bold text-ccs-teal-light mb-4">
@@ -18,9 +27,9 @@
 
             <div>
                 <label for="ticket_type_id" class="block text-sm text-gray-300 mb-1">{{ __('Ticket Type') }}</label>
-                <select id="ticket_type_id" name="ticket_type_id" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
-                    @foreach($ticketTypes as $ticketType)
-                        <option value="{{ $ticketType->id }}" @selected($ticketType->id === $selectedTicketTypeId)>
+                <select id="ticket_type_id" name="ticket_type_id" x-model="$store.ticketRequest.ticketTypeId" class="w-full border border-gray-600 bg-gray-900 text-white rounded px-3 py-2">
+                    @foreach($event->ticketTypes->where('is_active', true) as $ticketType)
+                        <option value="{{ $ticketType->id }}">
                             {{ app()->getLocale() === 'ar' ? $ticketType->name_ar : $ticketType->name_en }} — {{ $ticketType->price }} {{ $ticketType->currency }}
                         </option>
                     @endforeach
@@ -46,7 +55,7 @@
                 @error('phone') <p class="text-red-400 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
-            @foreach($requestFields as $field)
+            @foreach($event->ticketRequestFields as $field)
                 @php $inputKey = 'field_'.$field->id; @endphp
                 <div>
                     <label class="block text-sm text-gray-300 mb-1">
@@ -81,4 +90,5 @@
             <button type="submit" class="px-6 py-3 rounded bg-ccs-red hover:bg-ccs-maroon text-white font-bold">{{ __('Submit Request') }}</button>
         </form>
     </div>
-@endsection
+</div>
+@endif

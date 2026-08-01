@@ -18,4 +18,5 @@
     @include('landing.partials.location', ['event' => $event])
     @include('landing.partials.contact', ['event' => $event])
     @include('landing.partials.footer', ['event' => $event, 'onLandingPage' => true])
+    @include('landing.partials.ticket-request-modal', ['event' => $event])
 @endsection

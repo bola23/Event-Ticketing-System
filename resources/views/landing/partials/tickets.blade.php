@@ -51,9 +51,9 @@
                                 @endforeach
                             </div>
                         @endif
-                        <a href="{{ route('ticket-requests.create', $event) }}?type={{ $ticketType->id }}" class="text-center p-[14px] rounded-lg ccs-btn-red text-sm font-bold transition-transform duration-200 hover:scale-[1.03]">
+                        <button type="button" @click="$store.ticketRequest.show('{{ $ticketType->id }}')" class="text-center p-[14px] rounded-lg ccs-btn-red text-sm font-bold transition-transform duration-200 hover:scale-[1.03]">
                             {{ __('Request This Ticket') }}
-                        </a>
+                        </button>
                     </div>
                 </div>
             @endforeach

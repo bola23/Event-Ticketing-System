@@ -50,15 +50,6 @@ class DraftEventVisibilityTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_draft_event_ticket_request_page_returns_404(): void
-    {
-        $event = Event::factory()->create(['status' => EventStatus::Draft]);
-
-        $response = $this->get(route('ticket-requests.create', $event));
-
-        $response->assertStatus(404);
-    }
-
     public function test_draft_event_workshops_index_returns_404(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Draft]);

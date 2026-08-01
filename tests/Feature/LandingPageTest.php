@@ -134,7 +134,7 @@ class LandingPageTest extends TestCase
         $response->assertSee(route('agenda.show', $event), false);
     }
 
-    public function test_tickets_section_links_to_request_page(): void
+    public function test_tickets_section_button_opens_request_modal_for_that_ticket_type(): void
     {
         $event = Event::factory()->create();
         $ticketType = TicketType::factory()->for($event)->create(['name_en' => 'General']);
@@ -142,7 +142,7 @@ class LandingPageTest extends TestCase
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
         $response->assertSee('General');
-        $response->assertSee(route('ticket-requests.create', $event).'?type='.$ticketType->id, false);
+        $response->assertSee('$store.ticketRequest.show(\''.$ticketType->id.'\')', false);
     }
 
     public function test_awards_teaser_links_to_awards_page(): void

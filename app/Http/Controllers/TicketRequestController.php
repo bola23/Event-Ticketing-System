@@ -13,20 +13,9 @@ use App\Models\TicketRequestField;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
 
 class TicketRequestController extends Controller
 {
-    public function create(Event $event, Request $request): View
-    {
-        return view('ticket-requests.create', [
-            'event' => $event,
-            'ticketTypes' => $event->ticketTypes()->where('is_active', true)->get(),
-            'selectedTicketTypeId' => (int) $request->query('type'),
-            'requestFields' => $event->ticketRequestFields,
-        ]);
-    }
-
     public function store(TicketRequestStoreRequest $request, Event $event): RedirectResponse
     {
         $validated = $request->validated();
@@ -50,7 +39,7 @@ class TicketRequestController extends Controller
             return $ticket;
         });
 
-        return redirect()->route('ticket-requests.create', $event)->with('ticket_request_success', $ticket->ticket_number);
+        return redirect()->to(route('landing.show', $event).'#tickets')->with('ticket_request_success', $ticket->ticket_number);
     }
 
     private function storeAnswerFor(Ticket $ticket, TicketRequestField $field, Request $request): void

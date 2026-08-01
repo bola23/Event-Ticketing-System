@@ -32,7 +32,7 @@ class TicketRequestSubmissionTest extends TestCase
             'phone' => '+201001234567',
         ]);
 
-        $response->assertRedirect(route('ticket-requests.create', $event));
+        $response->assertRedirect(route('landing.show', $event).'#tickets');
         $this->assertDatabaseHas('tickets', [
             'event_id' => $event->id, 'name' => 'Kareem Al-Sayed', 'email' => 'kareem@example.com',
             'status' => TicketStatus::Pending->value,

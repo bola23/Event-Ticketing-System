@@ -28,8 +28,8 @@
         <a href="{{ route('agenda.show', $event) }}" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Agenda') }}</a>
         <a href="{{ $sectionBase }}#speakers" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Speakers') }}</a>
         <a href="{{ $sectionBase }}#workshops" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Workshops') }}</a>
-        <a href="{{ $sectionBase }}#awards" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Awards') }}</a>
         <a href="{{ $sectionBase }}#tickets" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Tickets') }}</a>
+        <a href="{{ $sectionBase }}#awards" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Awards') }}</a>
         <a href="{{ $sectionBase }}#partners" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Sponsors') }}</a>
         <a href="{{ $sectionBase }}#faq" class="py-3.5 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('FAQs') }}</a>
         <div class="sm:hidden flex items-center gap-1 text-xs font-bold border border-white/20 rounded-md overflow-hidden mt-4 w-fit">

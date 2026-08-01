@@ -3,7 +3,23 @@ import intlTelInput from 'intl-tel-input/intlTelInputWithUtils';
 import 'intl-tel-input/styles';
 
 window.Alpine = Alpine;
+
+Alpine.store('ticketRequest', {
+    open: false,
+    ticketTypeId: null,
+    show(ticketTypeId) {
+        this.ticketTypeId = ticketTypeId;
+        this.open = true;
+    },
+});
+
 Alpine.start();
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        Alpine.store('ticketRequest').open = false;
+    }
+});
 
 const phoneInput = document.querySelector('#phone');
 if (phoneInput) {
