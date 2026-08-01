@@ -133,3 +133,36 @@ h1, h2, h3, h4, h5, .font-display {
     transition: none;
   }
 }
+
+/* Dark-theme override for the intl-tel-input phone widget — its default CSS is light-mode only */
+.iti {
+  --iti-hover-color: rgba(255, 255, 255, 0.08);
+  --iti-border-color: rgba(255, 255, 255, 0.2);
+  --iti-country-selector-bg: transparent;
+  --iti-icon-color: #9ca3af;
+}
+
+.iti--detached-country-selector {
+  background: var(--color-ccs-black);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.iti__search-input {
+  background: var(--color-ccs-black);
+  color: #fff;
+}
+
+.iti__search-input::placeholder {
+  color: #6b7280;
+}
+
+.iti__country-list {
+  background: var(--color-ccs-black);
+}
+
+.iti__country-name {
+  color: #d1d5db;
+}
