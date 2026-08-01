@@ -19,7 +19,7 @@
         @endif
         <div class="flex flex-wrap justify-center gap-4 mb-16">
             <a href="#tickets" class="px-8 py-4 rounded-lg ccs-btn-red text-base font-bold">{{ __('Request Your Ticket') }}</a>
-            <a href="#about" class="px-8 py-4 rounded-lg border border-white/35 text-base font-bold">{{ __('Explore Event') }}</a>
+            <a href="{{ route('agenda.show', $event) }}" class="px-8 py-4 rounded-lg border border-white/35 text-base font-bold">{{ __('Explore Event') }}</a>
         </div>
 
         <div class="flex flex-wrap justify-center gap-3 md:gap-7" x-data="{
