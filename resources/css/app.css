@@ -169,3 +169,12 @@ h1, h2, h3, h4, h5, .font-display {
 .iti__country-name {
   color: #d1d5db;
 }
+
+.iti__country-selector {
+  background: var(--color-ccs-black);
+}
+
+.iti__no-results {
+  background: var(--color-ccs-black);
+  color: #9ca3af;
+}
