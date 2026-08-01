@@ -8,6 +8,7 @@ use Database\Factories\WorkshopFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Workshop extends Model
 {
@@ -31,6 +32,11 @@ class Workshop extends Model
     public function speaker(): BelongsTo
     {
         return $this->belongsTo(Speaker::class);
+    }
+
+    public function agendaItems(): HasMany
+    {
+        return $this->hasMany(AgendaItem::class)->orderBy('day_date')->orderBy('start_time');
     }
 
     protected static function newFactory(): WorkshopFactory

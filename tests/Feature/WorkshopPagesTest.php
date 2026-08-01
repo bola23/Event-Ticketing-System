@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\AgendaItemType;
+use App\Models\AgendaItem;
 use App\Models\Event;
 use App\Models\Speaker;
 use App\Models\Workshop;
@@ -23,6 +25,16 @@ class WorkshopPagesTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('AI Content Workshop');
+    }
+
+    public function test_index_links_back_to_the_landing_page(): void
+    {
+        $event = Event::factory()->create();
+        Workshop::factory()->for($event)->create();
+
+        $response = $this->get(route('workshops.index', $event));
+
+        $response->assertSee(route('landing.show', $event), false);
     }
 
     public function test_show_displays_workshop_detail_with_speaker(): void
@@ -50,5 +62,33 @@ class WorkshopPagesTest extends TestCase
         $response = $this->get(route('workshops.show', [$event, $otherEventWorkshop]));
 
         $response->assertStatus(404);
+    }
+
+    public function test_show_displays_scheduled_session_time_when_linked_to_an_agenda_item(): void
+    {
+        $event = Event::factory()->create();
+        $workshop = Workshop::factory()->for($event)->create();
+        AgendaItem::factory()->for($event)->create([
+            'workshop_id' => $workshop->id,
+            'type' => AgendaItemType::WorkshopSession,
+            'day_date' => '2026-08-15',
+            'start_time' => '14:00',
+            'end_time' => '15:30',
+        ]);
+
+        $response = $this->get(route('workshops.show', [$event, $workshop]));
+
+        $response->assertSee('14:00', false);
+        $response->assertSee('15:30', false);
+    }
+
+    public function test_show_omits_schedule_block_when_no_agenda_item_is_linked(): void
+    {
+        $event = Event::factory()->create();
+        $workshop = Workshop::factory()->for($event)->create();
+
+        $response = $this->get(route('workshops.show', [$event, $workshop]));
+
+        $response->assertOk();
     }
 }

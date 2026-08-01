@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Models;
 
+use App\Enums\AgendaItemType;
+use App\Models\AgendaItem;
 use App\Models\Event;
 use App\Models\Speaker;
 use App\Models\Workshop;
@@ -35,5 +37,21 @@ class WorkshopTest extends TestCase
         $workshop = Workshop::factory()->create(['slug' => 'ai-content-workshop']);
 
         $this->assertSame('slug', $workshop->getRouteKeyName());
+    }
+
+    public function test_workshop_has_many_agenda_items_ordered_by_time(): void
+    {
+        $event = Event::factory()->create();
+        $workshop = Workshop::factory()->for($event)->create();
+        AgendaItem::factory()->for($event)->create([
+            'workshop_id' => $workshop->id, 'type' => AgendaItemType::WorkshopSession,
+            'day_date' => '2026-08-16', 'start_time' => '09:00', 'title_en' => 'Second Session',
+        ]);
+        AgendaItem::factory()->for($event)->create([
+            'workshop_id' => $workshop->id, 'type' => AgendaItemType::WorkshopSession,
+            'day_date' => '2026-08-15', 'start_time' => '09:00', 'title_en' => 'First Session',
+        ]);
+
+        $this->assertSame(['First Session', 'Second Session'], $workshop->agendaItems->pluck('title_en')->all());
     }
 }

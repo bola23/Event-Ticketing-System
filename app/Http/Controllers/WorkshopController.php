@@ -25,7 +25,7 @@ class WorkshopController extends Controller
             throw new NotFoundHttpException;
         }
 
-        $workshop->load('speaker');
+        $workshop->load(['speaker', 'agendaItems']);
 
         return view('workshops.show', ['event' => $event, 'workshop' => $workshop]);
     }
