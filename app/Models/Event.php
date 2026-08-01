@@ -17,7 +17,7 @@ class Event extends Model
 
     /** @var list<string> The landing page sections an admin can independently show or hide. Hero is not included — it always renders. */
     public const TOGGLEABLE_SECTIONS = [
-        'about', 'stats', 'speakers', 'workshops', 'agenda-teaser', 'tickets',
+        'about', 'stats', 'speakers', 'workshops', 'tickets',
         'awards', 'gallery', 'testimonials', 'partners', 'faq', 'location', 'contact', 'newsletter',
     ];
 

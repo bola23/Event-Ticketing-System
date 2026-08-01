@@ -1,4 +1,5 @@
 {{-- resources/views/landing/partials/footer.blade.php --}}
+@php $sectionBase = ($onLandingPage ?? false) ? '' : route('landing.show', $event); @endphp
 @if($event->isSectionVisible('newsletter'))
 <footer id="newsletter" class="scroll-mt-24 w-full px-[clamp(20px,6vw,80px)] pb-[100px] pt-24 border-t border-white/10" style="background: linear-gradient(160deg, var(--color-ccs-maroon), var(--color-ccs-black));">
     <div class="text-center pb-16 mb-16 border-b border-white/10">
@@ -23,17 +24,17 @@
         </div>
         <div class="flex flex-col gap-3">
             <span class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">{{ __('Event') }}</span>
-            <a href="#about" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('About') }}</a>
-            <a href="#agenda-teaser" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Agenda') }}</a>
-            <a href="#speakers" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Speakers') }}</a>
-            <a href="#workshops" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Workshops') }}</a>
+            <a href="{{ $sectionBase }}#about" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('About') }}</a>
+            <a href="{{ route('agenda.show', $event) }}" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Agenda') }}</a>
+            <a href="{{ $sectionBase }}#speakers" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Speakers') }}</a>
+            <a href="{{ $sectionBase }}#workshops" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Workshops') }}</a>
         </div>
         <div class="flex flex-col gap-3">
             <span class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">{{ __('Program') }}</span>
-            <a href="#awards" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Awards') }}</a>
-            <a href="#partners" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Sponsors') }}</a>
-            <a href="#tickets" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Tickets') }}</a>
-            <a href="#faq" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('FAQs') }}</a>
+            <a href="{{ $sectionBase }}#awards" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Awards') }}</a>
+            <a href="{{ $sectionBase }}#partners" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Sponsors') }}</a>
+            <a href="{{ $sectionBase }}#tickets" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('Tickets') }}</a>
+            <a href="{{ $sectionBase }}#faq" class="text-sm text-gray-300 hover:text-white transition-colors">{{ __('FAQs') }}</a>
         </div>
         <div class="flex flex-col gap-3">
             <span class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">{{ __('Connect') }}</span>

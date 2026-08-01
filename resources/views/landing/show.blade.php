@@ -3,13 +3,12 @@
 @section('title', app()->getLocale() === 'ar' ? $event->name_ar : $event->name_en)
 
 @section('content')
-    @include('landing.partials.nav', ['event' => $event])
+    @include('landing.partials.nav', ['event' => $event, 'onLandingPage' => true])
     @include('landing.partials.hero', ['event' => $event])
     @include('landing.partials.about', ['event' => $event])
     @include('landing.partials.stats', ['event' => $event])
     @include('landing.partials.speakers', ['event' => $event])
     @include('landing.partials.workshops-teaser', ['event' => $event])
-    @include('landing.partials.agenda-teaser', ['event' => $event])
     @include('landing.partials.tickets', ['event' => $event])
     @include('landing.partials.awards-teaser', ['event' => $event])
     @include('landing.partials.gallery', ['event' => $event])
@@ -18,5 +17,5 @@
     @include('landing.partials.faq', ['event' => $event])
     @include('landing.partials.location', ['event' => $event])
     @include('landing.partials.contact', ['event' => $event])
-    @include('landing.partials.footer', ['event' => $event])
+    @include('landing.partials.footer', ['event' => $event, 'onLandingPage' => true])
 @endsection

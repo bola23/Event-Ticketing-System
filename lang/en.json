@@ -21,6 +21,7 @@
     "Attendees": "Attendees",
     "Awards Teaser Blurb": "Awards Teaser Blurb",
     "Awards": "Awards",
+    "Back to :event": "Back to :event",
     "Backed by the industry.": "Backed by the industry.",
     "Bio": "Bio",
     "CCS Admin": "CCS Admin",
@@ -140,7 +141,6 @@
     "Tagline": "Tagline",
     "Testimonials": "Testimonials",
     "These credentials do not match our records.": "These credentials do not match our records.",
-    "Three days, deliberately paced.": "Three days, deliberately paced.",
     "Ticket Generated": "Ticket Generated",
     "Ticket Request": "Ticket Request",
     "Ticket Type": "Ticket Type",
@@ -169,5 +169,6 @@
     "Workshops": "Workshops",
     "you@company.com": "you@company.com",
     ":count seat|:count seats": ":count seat|:count seats",
-    ":count workshop included|:count workshops included": ":count workshop included|:count workshops included"
+    ":count workshop included|:count workshops included": ":count workshop included|:count workshops included",
+    ":count day, deliberately paced.|:count days, deliberately paced.": ":count day, deliberately paced.|:count days, deliberately paced."
 }

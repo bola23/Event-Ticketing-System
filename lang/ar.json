@@ -21,6 +21,7 @@
     "Attendees": "الحضور",
     "Awards Teaser Blurb": "نص تشويقي للجوائز",
     "Awards": "الجوائز",
+    "Back to :event": "الرجوع إلى :event",
     "Backed by the industry.": "بدعم من القطاع.",
     "Bio": "نبذة",
     "CCS Admin": "إدارة قمة صناع المحتوى",
@@ -140,7 +141,6 @@
     "Tagline": "الشعار",
     "Testimonials": "الشهادات",
     "These credentials do not match our records.": "بيانات الدخول هذه غير مطابقة لسجلاتنا.",
-    "Three days, deliberately paced.": "ثلاثة أيام، بإيقاع مدروس.",
     "Ticket Generated": "إصدار التذكرة",
     "Ticket Request": "طلب التذكرة",
     "Ticket Type": "نوع التذكرة",
@@ -169,5 +169,6 @@
     "Workshops": "ورش العمل",
     "you@company.com": "you@company.com",
     ":count seat|:count seats": "بدون مقاعد|مقعد واحد|مقعدان|:count مقاعد|:count مقعدًا|:count مقعد",
-    ":count workshop included|:count workshops included": "بدون ورش عمل|ورشة عمل واحدة مضمّنة|ورشتا عمل مضمّنتان|:count ورش عمل مضمّنة|:count ورشة عمل مضمّنة|:count ورشة عمل مضمّنة"
+    ":count workshop included|:count workshops included": "بدون ورش عمل|ورشة عمل واحدة مضمّنة|ورشتا عمل مضمّنتان|:count ورش عمل مضمّنة|:count ورشة عمل مضمّنة|:count ورشة عمل مضمّنة",
+    ":count day, deliberately paced.|:count days, deliberately paced.": "بدون أيام، بإيقاع مدروس.|يوم واحد، بإيقاع مدروس.|يومان، بإيقاع مدروس.|:count أيام، بإيقاع مدروس.|:count يومًا، بإيقاع مدروس.|:count يوم، بإيقاع مدروس."
 }

@@ -11,10 +11,10 @@ class AgendaController extends Controller
 {
     public function show(Event $event): View
     {
-        $itemsByDay = $event->agendaItems()->with(['speaker', 'workshop'])->get()->groupBy(
-            fn ($item) => $item->day_date->toDateString()
-        );
+        $days = $event->agendaItems()->with(['speaker', 'workshop'])->get()
+            ->groupBy(fn ($item) => $item->day_date->toDateString())
+            ->values();
 
-        return view('agenda.show', ['event' => $event, 'itemsByDay' => $itemsByDay]);
+        return view('agenda.show', ['event' => $event, 'days' => $days]);
     }
 }

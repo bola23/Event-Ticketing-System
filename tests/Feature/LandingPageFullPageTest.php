@@ -42,7 +42,7 @@ class LandingPageFullPageTest extends TestCase
         $response->assertOk();
         $response->assertSeeInOrder([
             'id="hero"', 'id="about"', 'id="speakers"', 'id="workshops"',
-            'id="agenda-teaser"', 'id="tickets"', 'id="awards"', 'id="gallery"',
+            'id="tickets"', 'id="awards"', 'id="gallery"',
             'id="testimonials"', 'id="partners"', 'id="faq"', 'id="location"',
             'id="contact"', 'id="newsletter"',
         ], false);
