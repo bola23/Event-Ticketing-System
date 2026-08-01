@@ -1,6 +1,6 @@
 {{-- resources/views/landing/partials/tickets.blade.php --}}
 @if($event->ticketTypes->isNotEmpty() && $event->isSectionVisible('tickets'))
-    <section id="tickets" class="ccs-section scroll-mt-24">
+    <section id="tickets" class="ccs-section scroll-mt-24" x-data>
         <div class="max-w-[680px] mb-16">
             <div class="ccs-eyebrow text-ccs-gold" data-reveal>{{ __('Ticket Request') }}</div>
             <h2 class="font-display text-[clamp(32px,3.6vw,45px)] font-extrabold mb-[18px]" data-reveal>{{ __("There's no checkout. There's a review.") }}</h2>
