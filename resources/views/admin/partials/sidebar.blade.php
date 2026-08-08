@@ -21,7 +21,7 @@
             {{ __('Events') }}
         </a>
 
-        @isset($event)
+        @if(isset($event) && $event->exists)
             <div class="mt-6 pt-6 border-t border-gray-800">
                 <p class="text-xs uppercase tracking-wide text-gray-500 px-3 mb-2">{{ $event->name_en }}</p>
                 @php
@@ -50,7 +50,7 @@
                     </a>
                 @endforeach
             </div>
-        @endisset
+        @endif
     </nav>
 
     <form method="POST" action="{{ route('admin.logout') }}" class="mt-6 pt-6 border-t border-gray-800">

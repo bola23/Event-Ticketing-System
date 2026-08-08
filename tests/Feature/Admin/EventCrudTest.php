@@ -18,6 +18,15 @@ class EventCrudTest extends TestCase
         $this->get(route('admin.events.index'))->assertRedirect(route('admin.login'));
     }
 
+    public function test_admin_can_view_the_create_page(): void
+    {
+        $admin = User::factory()->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.events.create'));
+
+        $response->assertOk();
+    }
+
     public function test_admin_can_create_an_event(): void
     {
         $admin = User::factory()->create();
