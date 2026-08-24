@@ -69,8 +69,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->except('show')
             ->parameters(['request-form-fields' => 'requestField']);
         Route::get('events/{event}/ticket-requests', [TicketRequestQueueController::class, 'index'])->name('events.ticket-requests.index');
-        Route::patch('events/{event}/ticket-requests/{ticket}/approve', [TicketRequestQueueController::class, 'approve'])->name('events.ticket-requests.approve');
-        Route::patch('events/{event}/ticket-requests/{ticket}/reject', [TicketRequestQueueController::class, 'reject'])->name('events.ticket-requests.reject');
+        Route::patch('events/{event}/ticket-requests/{ticket}/{status}', [TicketRequestQueueController::class, 'updateStatus'])
+            ->name('events.ticket-requests.update-status');
         Route::get('events/{event}/ticket-requests/{ticket}/answers/{answer}/download', [TicketRequestQueueController::class, 'downloadAnswer'])->name('events.ticket-requests.answers.download');
         Route::get('events/{event}/content', [LandingPageContentController::class, 'edit'])->name('events.content.edit');
         Route::put('events/{event}/content', [LandingPageContentController::class, 'update'])->name('events.content.update');
