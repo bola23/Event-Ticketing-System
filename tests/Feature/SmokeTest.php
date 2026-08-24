@@ -12,6 +12,6 @@ class SmokeTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertRedirect('/events/ccs-2026');
+        $response->assertOk();
     }
 }

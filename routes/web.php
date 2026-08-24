@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AwardsController;
 use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\EventsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NewsletterSubscriberController;
 use App\Http\Controllers\TicketRequestController;
@@ -26,9 +28,9 @@ use App\Http\Controllers\WorkshopController;
 use App\Http\Middleware\EnsureEventIsPublished;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('landing.show', 'ccs-2026');
-});
+Route::get('/', [HomeController::class, 'show'])->name('home');
+Route::get('/events', [EventsController::class, 'index'])->name('events.index');
+Route::post('/contact', [ContactMessageController::class, 'storeGeneral'])->name('contact.store.general');
 
 Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->group(function () {
     Route::get('/', [LandingPageController::class, 'show'])->name('landing.show');
