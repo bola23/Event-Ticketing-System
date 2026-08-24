@@ -87,6 +87,14 @@ h1, h2, h3, h4, h5, .font-display {
 .hub-page:lang(ar) h1, .hub-page:lang(ar) h2, .hub-page:lang(ar) h3, .hub-page:lang(ar) h4, .hub-page:lang(ar) h5, .hub-page:lang(ar) .font-display {
   font-family: 'beIN Hub Arabic', 'Cairo', sans-serif;
   font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+/* beIN Hub Arabic runs visually larger and denser per em than Manrope — sized down so
+   Arabic headings match the English version's visual weight instead of overpowering it. */
+.hub-page:lang(ar) h1 {
+  font-size: clamp(2.25rem, 5.2vw, 4.25rem);
 }
 
 [dir="rtl"] {
