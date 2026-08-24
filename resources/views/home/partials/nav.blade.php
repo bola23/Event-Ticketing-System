@@ -6,8 +6,9 @@
     class="fixed top-0 inset-x-0 z-50 flex items-center justify-between gap-4 px-5 md:px-16 py-5 transition-colors duration-300 border-b"
     :class="scrolled ? 'bg-hub-dark/90 backdrop-blur border-white/10' : 'bg-transparent border-transparent'"
 >
-    <a href="{{ $sectionBase }}#hero" class="font-display font-extrabold text-xl shrink-0 tracking-tight">
-        Creators <span class="text-hub-purple-light">Hub</span>
+    <a href="{{ $sectionBase }}#hero" class="flex items-center gap-2.5 shrink-0">
+        <img src="{{ asset('images/creators-hub/mark-white.png') }}" alt="" aria-hidden="true" class="h-7 w-auto">
+        <span class="font-display font-extrabold text-xl tracking-tight">Creators <span class="text-hub-purple-light">Hub</span></span>
     </a>
 
     <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-gray-300">

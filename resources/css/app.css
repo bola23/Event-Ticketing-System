@@ -8,6 +8,42 @@
 @import "@fontsource/cairo/400.css";
 @import "@fontsource/cairo/700.css";
 
+/* Creators Hub brand font (Arabic only — supplied by the client, not an npm package) */
+@font-face {
+  font-family: 'beIN Hub Arabic';
+  src: url('/fonts/creators-hub/beINNewArabicFont2017-Thin.ttf') format('truetype');
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'beIN Hub Arabic';
+  src: url('/fonts/creators-hub/beINNewArabicFont2017-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'beIN Hub Arabic';
+  src: url('/fonts/creators-hub/beINNewArabicFont2017-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'beIN Hub Arabic';
+  src: url('/fonts/creators-hub/beINNewArabicFont2017-DemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'beIN Hub Arabic';
+  src: url('/fonts/creators-hub/beINNewArabicFont2017-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
 @theme {
   --color-ccs-coral: #ff7e71;
   --color-ccs-red: #1a0006;
@@ -42,6 +78,15 @@ h1, h2, h3, h4, h5, .font-display {
 
 :lang(ar) h1, :lang(ar) h2, :lang(ar) h3, :lang(ar) h4, :lang(ar) h5, :lang(ar) .font-display {
   font-family: 'Cairo', sans-serif;
+}
+
+.hub-page:lang(ar) {
+  font-family: 'beIN Hub Arabic', 'Cairo', sans-serif;
+}
+
+.hub-page:lang(ar) h1, .hub-page:lang(ar) h2, .hub-page:lang(ar) h3, .hub-page:lang(ar) h4, .hub-page:lang(ar) h5, .hub-page:lang(ar) .font-display {
+  font-family: 'beIN Hub Arabic', 'Cairo', sans-serif;
+  font-weight: 700;
 }
 
 [dir="rtl"] {

@@ -3,7 +3,7 @@
 
 @section('title', 'Creators Hub — '.__('Events'))
 
-@section('bodyClass', 'bg-hub-dark text-white')
+@section('bodyClass', 'hub-page bg-hub-dark text-white')
 
 @section('content')
     @include('home.partials.nav', ['onHomePage' => false])

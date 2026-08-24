@@ -19,37 +19,25 @@
         </div>
 
         <div class="relative hidden lg:block hub-fade-up" style="animation-delay: 0.15s" aria-hidden="true">
-            <svg viewBox="0 0 520 520" class="w-full h-auto text-hub-purple-light/80" fill="none" stroke="currentColor" stroke-width="1.25">
-                {{-- isometric wireframe structure — the page's recurring blueprint motif --}}
-                <g class="hub-draw-line" style="--hub-line-length: 2400">
-                    <path d="M260 90 L380 155 L260 220 L140 155 Z" />
-                    <path d="M140 155 L140 335 L260 400 L260 220" />
-                    <path d="M380 155 L380 335 L260 400" />
-                    <path d="M260 220 L260 400" stroke-dasharray="4 6" stroke-width="1" />
-                    <path d="M200 122 L200 302 L260 335" stroke-width="1" opacity="0.55" />
+            <svg viewBox="0 0 520 520" class="absolute inset-0 w-full h-full text-hub-purple-light/50" fill="none" stroke="currentColor" stroke-width="1">
+                {{-- dimension line annotation — quiet supporting texture around the real mark --}}
+                <g opacity="0.6">
+                    <path d="M60 460 L220 460" />
+                    <path d="M60 454 L60 466" />
+                    <path d="M220 454 L220 466" />
                 </g>
-                <g fill="currentColor" stroke="none">
-                    <circle cx="260" cy="90" r="3.5" />
-                    <circle cx="380" cy="155" r="3.5" />
-                    <circle cx="260" cy="220" r="3.5" />
-                    <circle cx="140" cy="155" r="3.5" />
-                    <circle cx="140" cy="335" r="3.5" />
-                    <circle cx="260" cy="400" r="3.5" />
-                    <circle cx="380" cy="335" r="3.5" />
-                </g>
-                {{-- dimension line annotation --}}
-                <g opacity="0.6" stroke-width="1">
-                    <path d="M140 430 L260 430" />
-                    <path d="M140 424 L140 436" />
-                    <path d="M260 424 L260 436" />
-                </g>
-                <text x="200" y="452" text-anchor="middle" fill="currentColor" stroke="none" font-size="11" letter-spacing="1" font-family="Inter, sans-serif" opacity="0.7">4.20 M</text>
-                {{-- corner register mark --}}
-                <g opacity="0.5" stroke-width="1">
-                    <path d="M40 40 L40 70 M40 40 L70 40" />
-                    <path d="M480 480 L480 450 M480 480 L450 480" />
+                <text x="140" y="482" text-anchor="middle" fill="currentColor" stroke="none" font-size="11" letter-spacing="1" font-family="Inter, sans-serif" opacity="0.7">4.20 M</text>
+                {{-- corner register marks --}}
+                <g opacity="0.5">
+                    <path d="M30 30 L30 60 M30 30 L60 30" />
+                    <path d="M490 490 L490 460 M490 490 L460 490" />
                 </g>
             </svg>
+            <img
+                src="{{ asset('images/creators-hub/mark-secondary.png') }}"
+                alt=""
+                class="relative w-full max-w-[380px] mx-auto drop-shadow-[0_30px_60px_rgba(60,52,137,0.45)]"
+            >
         </div>
     </div>
 
