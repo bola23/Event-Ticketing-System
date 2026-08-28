@@ -25,6 +25,20 @@ trait ResolvesStoredMedia
             return $path;
         }
 
-        return Storage::disk('public')->url($path);
+        $url = Storage::disk('public')->url($path);
+
+        // The public disk builds its URLs from APP_URL, which routinely disagrees with the
+        // host the site is actually being browsed on (localhost vs 127.0.0.1:8000, a Laragon
+        // vhost, a staging domain). Since these files are served by this application out of
+        // public/storage, link to them by root-relative path so the host never matters. A disk
+        // deliberately pointed somewhere else — a CDN, say — keeps its absolute URL.
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $urlHost = parse_url($url, PHP_URL_HOST);
+
+        if ($urlHost === null || $urlHost === $appHost) {
+            return parse_url($url, PHP_URL_PATH) ?: $url;
+        }
+
+        return $url;
     }
 }
