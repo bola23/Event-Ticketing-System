@@ -165,7 +165,10 @@ class LandingPageTest extends TestCase
 
         $response = $this->get(route('landing.show', $event).'?lang=en');
 
-        $response->assertSee('The Future of Content');
+        // The hero sets the headline as a stacked wordmark, so its words are split across
+        // lines rather than appearing as one contiguous string.
+        $response->assertSee('The Future of');
+        $response->assertSee('Content');
     }
 
     public function test_hero_eyebrow_shows_locale_correct_venue(): void

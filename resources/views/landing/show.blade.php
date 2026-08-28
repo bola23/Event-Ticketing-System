@@ -5,6 +5,7 @@
 @section('content')
     @include('landing.partials.nav', ['event' => $event, 'onLandingPage' => true])
     @include('landing.partials.hero', ['event' => $event])
+    @include('landing.partials.reel', ['event' => $event])
     @include('landing.partials.about', ['event' => $event])
     @include('landing.partials.stats', ['event' => $event])
     @include('landing.partials.speakers', ['event' => $event])

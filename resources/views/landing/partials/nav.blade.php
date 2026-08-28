@@ -1,6 +1,7 @@
 {{-- resources/views/landing/partials/nav.blade.php --}}
 @php $sectionBase = ($onLandingPage ?? false) ? '' : route('landing.show', $event); @endphp
-<header x-data="{ open: false }" class="fixed top-0 inset-x-0 z-50 flex items-center justify-between gap-4 px-5 md:px-16 py-5 bg-ccs-black/80 backdrop-blur border-b border-white/10">
+<div class="ccs-scroll-progress" data-scroll-progress role="presentation"></div>
+<header x-data="{ open: false }" class="fixed top-[3px] inset-x-0 z-50 flex items-center justify-between gap-4 px-5 md:px-16 py-5 bg-ccs-black/80 backdrop-blur border-b border-white/10">
     <a href="{{ $sectionBase }}#hero" class="font-display font-extrabold text-xl shrink-0">CCS <span class="text-ccs-coral">{{ $event->start_date->format('Y') }}</span></a>
 
     <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-gray-300">

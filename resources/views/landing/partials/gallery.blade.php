@@ -6,7 +6,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach($event->galleryPhotos as $photo)
                 <div class="aspect-square rounded-xl overflow-hidden border border-white/10 bg-white/5" data-reveal data-reveal-delay="{{ min($loop->iteration, 5) }}">
-                    <img src="{{ $photo->image_path }}" alt="{{ app()->getLocale() === 'ar' ? $photo->caption_ar : $photo->caption_en }}" class="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-110" loading="lazy">
+                    <img src="{{ $photo->imageUrl() }}" alt="{{ app()->getLocale() === 'ar' ? $photo->caption_ar : $photo->caption_en }}" class="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-110" loading="lazy">
                 </div>
             @endforeach
         </div>
