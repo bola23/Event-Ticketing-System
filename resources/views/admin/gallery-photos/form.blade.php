@@ -4,11 +4,16 @@
 @section('content')
     <x-admin.page-header :title="$galleryPhoto->exists ? __('Edit Photo') : __('New Photo')" />
 
-    <form method="POST" action="{{ $galleryPhoto->exists ? route('admin.events.gallery-photos.update', [$event, $galleryPhoto]) : route('admin.events.gallery-photos.store', $event) }}">
+    <form method="POST" action="{{ $galleryPhoto->exists ? route('admin.events.gallery-photos.update', [$event, $galleryPhoto]) : route('admin.events.gallery-photos.store', $event) }}" enctype="multipart/form-data">
         @csrf
         @if($galleryPhoto->exists) @method('PUT') @endif
 
-        <x-admin.field name="image_path" label="{{ __('Image Path / URL') }}" :value="old('image_path', $galleryPhoto->image_path)" required />
+        <x-admin.media-upload
+            name="image"
+            :label="__('Image')"
+            :current="$galleryPhoto->imageUrl()"
+            :required="!$galleryPhoto->exists"
+        />
         <x-admin.bilingual-field name="caption" label="{{ __('Caption') }}" :value-ar="old('caption_ar', $galleryPhoto->caption_ar)" :value-en="old('caption_en', $galleryPhoto->caption_en)" />
         <x-admin.field type="number" name="sort_order" label="{{ __('Sort Order') }}" :value="old('sort_order', $galleryPhoto->sort_order ?? 0)" />
 

@@ -16,7 +16,8 @@ class GalleryPhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image_path' => ['required', 'string', 'max:500'],
+            // Required when creating; an edit keeps the stored image unless one is chosen.
+            'image' => [$this->route('galleryPhoto')?->exists ? 'nullable' : 'required', 'image', 'max:4096'],
             'caption_ar' => ['nullable', 'string', 'max:255'],
             'caption_en' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],

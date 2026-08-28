@@ -21,6 +21,7 @@ class SponsorRequest extends FormRequest
             'name_en' => ['required', 'string', 'max:255'],
             'tier' => ['required', Rule::in(['platinum', 'gold', 'silver', 'bronze'])],
             'website_url' => ['nullable', 'url'],
+            'logo' => ['nullable', 'image', 'max:4096'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
     }

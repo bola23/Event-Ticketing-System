@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GalleryPhotoController;
 use App\Http\Controllers\Admin\LandingPageContentController;
 use App\Http\Controllers\Admin\NewsletterSubscriberController as AdminNewsletterSubscriberController;
+use App\Http\Controllers\Admin\ReelController;
 use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -64,6 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->except('show')
             ->parameters(['gallery-photos' => 'galleryPhoto']);
         Route::resource('events.testimonials', TestimonialController::class)->except('show');
+        Route::resource('events.reels', ReelController::class)->except('show');
         Route::get('events/{event}/contact-messages', [AdminContactMessageController::class, 'index'])->name('events.contact-messages.index');
         Route::get('events/{event}/newsletter-subscribers', [AdminNewsletterSubscriberController::class, 'index'])->name('events.newsletter-subscribers.index');
         Route::resource('events.faqs', FaqController::class)->except('show');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesMediaUploads;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SponsorRequest;
 use App\Models\Event;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SponsorController extends Controller
 {
+    use HandlesMediaUploads;
+
     public function index(Event $event): View
     {
         return view('admin.sponsors.index', ['event' => $event, 'sponsors' => $event->sponsors]);
@@ -26,7 +29,10 @@ class SponsorController extends Controller
 
     public function store(SponsorRequest $request, Event $event): RedirectResponse
     {
-        $event->sponsors()->create($request->validated());
+        $data = $request->safe()->except(['logo']);
+        $data = $this->withUploadedMedia($data, $request, 'logo', 'logo_path', 'sponsors');
+
+        $event->sponsors()->create($data);
 
         return redirect()->route('admin.events.sponsors.index', $event);
     }
@@ -41,7 +47,10 @@ class SponsorController extends Controller
     public function update(SponsorRequest $request, Event $event, Sponsor $sponsor): RedirectResponse
     {
         $this->assertBelongsToEvent($event, $sponsor);
-        $sponsor->update($request->validated());
+        $data = $request->safe()->except(['logo']);
+        $data = $this->withUploadedMedia($data, $request, 'logo', 'logo_path', 'sponsors', $sponsor->logo_path);
+
+        $sponsor->update($data);
 
         return redirect()->route('admin.events.sponsors.index', $event);
     }
@@ -49,6 +58,7 @@ class SponsorController extends Controller
     public function destroy(Event $event, Sponsor $sponsor): RedirectResponse
     {
         $this->assertBelongsToEvent($event, $sponsor);
+        $this->deleteStoredMedia($sponsor->logo_path);
         $sponsor->delete();
 
         return redirect()->route('admin.events.sponsors.index', $event);

@@ -17,7 +17,7 @@ class Event extends Model
 
     /** @var list<string> The landing page sections an admin can independently show or hide. Hero is not included — it always renders. */
     public const TOGGLEABLE_SECTIONS = [
-        'about', 'stats', 'speakers', 'workshops', 'tickets',
+        'about', 'stats', 'reel', 'speakers', 'workshops', 'tickets',
         'awards', 'gallery', 'testimonials', 'partners', 'faq', 'location', 'contact', 'newsletter',
     ];
 
@@ -68,6 +68,11 @@ class Event extends Model
     public function faqs(): HasMany
     {
         return $this->hasMany(Faq::class)->orderBy('sort_order');
+    }
+
+    public function reels(): HasMany
+    {
+        return $this->hasMany(Reel::class)->orderBy('sort_order');
     }
 
     public function galleryPhotos(): HasMany

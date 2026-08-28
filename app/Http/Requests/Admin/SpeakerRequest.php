@@ -22,6 +22,7 @@ class SpeakerRequest extends FormRequest
             'title_en' => ['nullable', 'string', 'max:255'],
             'bio_ar' => ['nullable', 'string'],
             'bio_en' => ['nullable', 'string'],
+            'photo' => ['nullable', 'image', 'max:4096'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
     }
