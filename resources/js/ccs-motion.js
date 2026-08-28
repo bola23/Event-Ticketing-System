@@ -98,36 +98,58 @@ function initReel() {
     const cards = [...stage.querySelectorAll('[data-reel-card]')];
     if (cards.length === 0) return;
 
-    const caption = document.querySelector('[data-reel-caption]');
+    const caption = document.querySelector('[data-reel-caption-output]');
     const prev = document.querySelector('[data-reel-prev]');
     const next = document.querySelector('[data-reel-next]');
+
+    // Two cards each side of the focused one, so the fan reads 2 · 1 · 2.
+    const VISIBLE_EACH_SIDE = 2;
     let active = Math.floor(cards.length / 2);
 
     stage.dataset.enhanced = 'true';
 
+    /**
+     * Shortest signed distance from the active card around the ring, so the strip wraps
+     * instead of running out of cards at either end. With n cards the result lands in
+     * roughly [-n/2, n/2], which is what keeps the fan populated on every step.
+     */
+    const wrappedOffset = (index) => {
+        const count = cards.length;
+        let offset = (((index - active) % count) + count) % count;
+        if (offset > count / 2) {
+            offset -= count;
+        }
+        return offset;
+    };
+
     const layout = (animate = true) => {
+        // Spacing follows the rendered card width so the fan holds together across the
+        // clamp()'d sizes and after a resize.
+        const cardWidth = cards[0].offsetWidth || 240;
+
         cards.forEach((card, index) => {
-            const offset = index - active;
+            const offset = wrappedOffset(index);
             const distance = Math.abs(offset);
             const isActive = offset === 0;
+            const isVisible = distance <= VISIBLE_EACH_SIDE;
 
             card.dataset.active = String(isActive);
             card.setAttribute('aria-hidden', isActive ? 'false' : 'true');
             card.tabIndex = isActive ? 0 : -1;
+            // Cards parked off-stage must not swallow clicks meant for the visible fan.
+            card.style.pointerEvents = isVisible ? 'auto' : 'none';
 
-            const target = {
-                // Cards fan outwards, tucking back in depth and rotating to face centre.
-                x: offset * (distance > 2 ? 132 : 158),
-                z: -distance * 190,
-                rotateY: offset * -26,
-                scale: Math.max(0.62, 1 - distance * 0.14),
-                opacity: distance > 2 ? 0 : 1 - distance * 0.22,
+            gsap.to(card, {
+                x: offset * cardWidth * 0.64,
+                z: -distance * 170,
+                rotateY: offset * -20,
+                scale: Math.max(0.7, 1 - distance * 0.13),
+                opacity: isVisible ? 1 - distance * 0.26 : 0,
                 zIndex: 100 - distance,
-                duration: animate ? 0.75 : 0,
+                duration: animate ? 0.7 : 0,
                 ease: 'power3.out',
-            };
-
-            gsap.to(card, target);
+                overwrite: 'auto',
+            });
 
             // Only the focused clip plays; the rest hold on their poster frame.
             const video = card.querySelector('video');
@@ -156,19 +178,22 @@ function initReel() {
 
     prev?.addEventListener('click', () => move(-1));
     next?.addEventListener('click', () => move(1));
+
     cards.forEach((card, index) => {
         card.addEventListener('click', () => {
-            if (index !== active) {
-                active = index;
-                layout();
-            }
+            if (index === active) return;
+            // Step towards the clicked card the short way round, so clicking the card on
+            // the left always walks left even when it wraps past the end of the list.
+            move(wrappedOffset(index));
         });
     });
 
     stage.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowRight') { move(1); }
-        if (event.key === 'ArrowLeft') { move(-1); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
+        if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
     });
+
+    window.addEventListener('resize', () => layout(false));
 
     layout(false);
 

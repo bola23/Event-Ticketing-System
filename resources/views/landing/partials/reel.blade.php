@@ -43,7 +43,7 @@
                 <button type="button" class="ccs-reel-nav" data-reel-prev aria-label="{{ __('Previous clip') }}">
                     <span aria-hidden="true">&lsaquo;</span>
                 </button>
-                <p class="font-display text-lg md:text-2xl font-extrabold uppercase tracking-wide min-w-[10rem]" data-reel-caption aria-live="polite">
+                <p class="font-display text-lg md:text-2xl font-extrabold uppercase tracking-wide min-w-[10rem]" data-reel-caption-output aria-live="polite">
                     {{ $event->reels[$activeIndex]->caption() }}
                 </p>
                 <button type="button" class="ccs-reel-nav" data-reel-next aria-label="{{ __('Next clip') }}">
