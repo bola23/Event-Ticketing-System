@@ -327,21 +327,26 @@ h1, h2, h3, h4, h5, .font-display {
 .ccs-wordmark {
   font-family: 'Manrope', sans-serif;
   font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.84;
+  letter-spacing: -0.025em;
+  line-height: 1.04;
   text-transform: uppercase;
 }
 
 :lang(ar) .ccs-wordmark {
   font-family: 'Cairo', sans-serif;
   letter-spacing: 0;
-  line-height: 1.15;
+  line-height: 1.4;
+  font-size: clamp(1.9rem, 4.4vw, 3.9rem);
 }
 
-/* Each wordmark line is masked so the entrance can wipe it up into view. */
+/* Each wordmark line is masked so the entrance can wipe it up into view. The mask has to
+   clear ascenders and descenders, so the line box gets a little breathing room that the
+   negative margin then takes back out of the stack. */
 .ccs-wordmark-line {
   display: block;
   overflow: hidden;
+  padding-block: 0.08em;
+  margin-block: -0.02em;
 }
 
 .ccs-ribbon {

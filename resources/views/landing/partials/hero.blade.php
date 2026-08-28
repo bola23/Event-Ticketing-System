@@ -8,9 +8,18 @@
     $venueName = $locale === 'ar' ? $event->venue_name_ar : $event->venue_name_en;
     $tagline = $locale === 'ar' ? $event->tagline_ar : $event->tagline_en;
 
-    // The wordmark is set as stacked lines, so split the headline on its own words and
-    // give the last line the year alongside it, mirroring the reference lockup.
-    $words = preg_split('/\s+/u', trim($headlineText)) ?: [$headlineText];
+    // The wordmark stacks the headline over two lines with the year set in the accent
+    // colour. Event names usually already end in the year ("Content Creators Summit 2026"),
+    // so lift that off the end rather than printing it twice.
+    $headlineText = trim($headlineText);
+    $displayYear = $event->start_date->format('Y');
+
+    if (preg_match('/^(.*?)[\s\x{2013}\x{2014}-]*(\d{4})$/u', $headlineText, $matches) && trim($matches[1]) !== '') {
+        $headlineText = trim($matches[1]);
+        $displayYear = $matches[2];
+    }
+
+    $words = preg_split('/\s+/u', $headlineText) ?: [$headlineText];
     $lastWord = array_pop($words);
     $leadLine = implode(' ', $words);
 
@@ -57,13 +66,13 @@
                 @if($venueName) &middot; {{ $venueName }} @endif
             </p>
 
-            <h1 class="ccs-wordmark text-[clamp(2.6rem,7.6vw,6.5rem)] mb-5">
+            <h1 class="ccs-wordmark text-[clamp(2.1rem,5.4vw,4.75rem)] mb-6">
                 @if($leadLine !== '')
                     <span class="ccs-wordmark-line" data-hero-line><span class="block">{{ $leadLine }}</span></span>
                 @endif
                 <span class="ccs-wordmark-line" data-hero-line>
                     <span class="block">
-                        {{ $lastWord }}<span class="text-ccs-coral ms-3">{{ $event->start_date->format('Y') }}</span>
+                        {{ $lastWord }}@if($lastWord !== $displayYear)<span class="text-ccs-coral ms-3">{{ $displayYear }}</span>@endif
                     </span>
                 </span>
             </h1>
