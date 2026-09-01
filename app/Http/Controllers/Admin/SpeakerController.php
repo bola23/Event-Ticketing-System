@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesMediaUploads;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SpeakerRequest;
 use App\Models\Event;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SpeakerController extends Controller
 {
+    use HandlesMediaUploads;
+
     public function index(Event $event): View
     {
         return view('admin.speakers.index', ['event' => $event, 'speakers' => $event->speakers]);
@@ -26,7 +29,10 @@ class SpeakerController extends Controller
 
     public function store(SpeakerRequest $request, Event $event): RedirectResponse
     {
-        $event->speakers()->create($request->validated());
+        $data = $request->safe()->except(['photo']);
+        $data = $this->withUploadedMedia($data, $request, 'photo', 'photo_path', 'speakers');
+
+        $event->speakers()->create($data);
 
         return redirect()->route('admin.events.speakers.index', $event);
     }
@@ -41,7 +47,10 @@ class SpeakerController extends Controller
     public function update(SpeakerRequest $request, Event $event, Speaker $speaker): RedirectResponse
     {
         $this->assertBelongsToEvent($event, $speaker);
-        $speaker->update($request->validated());
+        $data = $request->safe()->except(['photo']);
+        $data = $this->withUploadedMedia($data, $request, 'photo', 'photo_path', 'speakers', $speaker->photo_path);
+
+        $speaker->update($data);
 
         return redirect()->route('admin.events.speakers.index', $event);
     }
@@ -49,6 +58,7 @@ class SpeakerController extends Controller
     public function destroy(Event $event, Speaker $speaker): RedirectResponse
     {
         $this->assertBelongsToEvent($event, $speaker);
+        $this->deleteStoredMedia($speaker->photo_path);
         $speaker->delete();
 
         return redirect()->route('admin.events.speakers.index', $event);

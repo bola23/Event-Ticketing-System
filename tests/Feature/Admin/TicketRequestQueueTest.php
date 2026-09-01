@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Admin;
 
 use App\Enums\TicketStatus;
+use App\Mail\TicketRequestApproved;
 use App\Mail\TicketRequestRejected;
 use App\Models\Event;
 use App\Models\Ticket;
@@ -46,18 +47,18 @@ class TicketRequestQueueTest extends TestCase
         $response->assertSee('Rejected Person');
     }
 
-    public function test_approve_moves_ticket_to_payment_pending_and_sends_no_mail(): void
+    public function test_approve_moves_ticket_to_payment_pending_and_sends_mail(): void
     {
         Mail::fake();
         $admin = User::factory()->create();
         $event = Event::factory()->create();
-        $ticket = Ticket::factory()->for($event)->create(['status' => TicketStatus::Pending]);
+        $ticket = Ticket::factory()->for($event)->create(['status' => TicketStatus::Pending, 'email' => 'attendee@example.com']);
 
-        $response = $this->actingAs($admin)->patch(route('admin.events.ticket-requests.approve', [$event, $ticket]));
+        $response = $this->actingAs($admin)->patch(route('admin.events.ticket-requests.update-status', [$event, $ticket, 'approved']));
 
         $response->assertRedirect(route('admin.events.ticket-requests.index', $event));
         $this->assertSame(TicketStatus::PaymentPending, $ticket->fresh()->status);
-        Mail::assertNothingSent();
+        Mail::assertSent(TicketRequestApproved::class, fn ($mail) => $mail->hasTo('attendee@example.com'));
     }
 
     public function test_reject_moves_ticket_to_rejected_and_sends_mail(): void
@@ -67,7 +68,7 @@ class TicketRequestQueueTest extends TestCase
         $event = Event::factory()->create();
         $ticket = Ticket::factory()->for($event)->create(['status' => TicketStatus::Pending, 'email' => 'attendee@example.com']);
 
-        $response = $this->actingAs($admin)->patch(route('admin.events.ticket-requests.reject', [$event, $ticket]));
+        $response = $this->actingAs($admin)->patch(route('admin.events.ticket-requests.update-status', [$event, $ticket, 'rejected']));
 
         $response->assertRedirect(route('admin.events.ticket-requests.index', $event));
         $this->assertSame(TicketStatus::Rejected, $ticket->fresh()->status);

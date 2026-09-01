@@ -4,7 +4,7 @@
 @section('content')
     <x-admin.page-header :title="$sponsor->exists ? __('Edit Sponsor') : __('New Sponsor')" />
 
-    <form method="POST" action="{{ $sponsor->exists ? route('admin.events.sponsors.update', [$event, $sponsor]) : route('admin.events.sponsors.store', $event) }}">
+    <form method="POST" action="{{ $sponsor->exists ? route('admin.events.sponsors.update', [$event, $sponsor]) : route('admin.events.sponsors.store', $event) }}" enctype="multipart/form-data">
         @csrf
         @if($sponsor->exists) @method('PUT') @endif
 
@@ -15,6 +15,13 @@
                 <option value="{{ $tier }}" @selected(old('tier', $sponsor->tier) === $tier)>{{ ucfirst($tier) }}</option>
             @endforeach
         </x-admin.field>
+
+        <x-admin.media-upload
+            name="logo"
+            :label="__('Logo')"
+            :current="$sponsor->logoUrl()"
+            :hint="__('Transparent PNG or SVG on a light background reads best.')"
+        />
 
         <x-admin.field name="website_url" label="{{ __('Website URL') }}" :value="old('website_url', $sponsor->website_url)" />
         <x-admin.field type="number" name="sort_order" label="{{ __('Sort Order') }}" :value="old('sort_order', $sponsor->sort_order ?? 0)" />

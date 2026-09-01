@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import initCcsMotion from './ccs-motion';
 import intlTelInput from 'intl-tel-input/intlTelInputWithUtils';
 import 'intl-tel-input/styles';
 
@@ -143,3 +144,5 @@ if ('IntersectionObserver' in window) {
 } else {
     document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-visible'));
 }
+
+initCcsMotion();

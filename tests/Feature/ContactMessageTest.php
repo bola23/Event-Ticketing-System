@@ -47,4 +47,26 @@ class ContactMessageTest extends TestCase
         $response->assertSee('id="contact"', false);
         $response->assertSee('action="'.route('contact.store', $event).'"', false);
     }
+
+    public function test_visitor_can_submit_the_general_contact_form(): void
+    {
+        $response = $this->post(route('contact.store.general'), [
+            'name' => 'Jane Creator', 'email' => 'jane@example.com', 'message' => 'How do I become a partner?',
+        ]);
+
+        $response->assertRedirect(route('home').'#contact');
+        $this->assertDatabaseHas('contact_messages', [
+            'event_id' => null, 'name' => 'Jane Creator', 'email' => 'jane@example.com',
+        ]);
+    }
+
+    public function test_general_contact_form_requires_a_valid_email(): void
+    {
+        $response = $this->post(route('contact.store.general'), [
+            'name' => 'Jane Creator', 'email' => 'not-an-email', 'message' => 'Hello',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+        $this->assertDatabaseCount('contact_messages', 0);
+    }
 }

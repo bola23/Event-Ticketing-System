@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RootRedirectTest extends TestCase
 {
-    public function test_root_redirects_to_ccs_landing_page(): void
+    use RefreshDatabase;
+
+    public function test_root_renders_the_creators_hub_home_page(): void
     {
         $response = $this->get('/');
 
-        $response->assertRedirect('/events/ccs-2026');
+        $response->assertOk();
+        $response->assertSee('Creators', false);
     }
 }

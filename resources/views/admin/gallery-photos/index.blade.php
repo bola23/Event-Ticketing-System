@@ -20,7 +20,7 @@
             <tbody>
                 @foreach($galleryPhotos as $photo)
                     <tr class="border-b border-gray-800">
-                        <td class="py-2 px-3"><img src="{{ $photo->image_path }}" class="h-12 w-12 object-cover rounded" alt=""></td>
+                        <td class="py-2 px-3"><img src="{{ $photo->imageUrl() }}" class="h-12 w-12 object-cover rounded" alt=""></td>
                         <td class="py-2 px-3">{{ $photo->caption_en }}</td>
                         <td class="py-2 px-3 text-right">
                             <a href="{{ route('admin.events.gallery-photos.edit', [$event, $photo]) }}" class="text-ccs-teal-light hover:underline">{{ __('Edit') }}</a>

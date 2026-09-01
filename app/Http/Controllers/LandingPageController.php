@@ -13,7 +13,7 @@ class LandingPageController extends Controller
     {
         $event->load([
             'speakers', 'sponsors', 'ticketTypes.features', 'ticketRequestFields', 'workshops',
-            'faqs', 'landingPageContent', 'galleryPhotos', 'testimonials',
+            'faqs', 'landingPageContent', 'galleryPhotos', 'testimonials', 'reels',
         ]);
 
         return view('landing.show', ['event' => $event]);

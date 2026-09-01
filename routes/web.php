@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GalleryPhotoController;
 use App\Http\Controllers\Admin\LandingPageContentController;
 use App\Http\Controllers\Admin\NewsletterSubscriberController as AdminNewsletterSubscriberController;
+use App\Http\Controllers\Admin\ReelController;
 use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -20,6 +21,8 @@ use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\AwardsController;
 use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\EventsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NewsletterSubscriberController;
 use App\Http\Controllers\TicketPaymentController;
@@ -28,9 +31,9 @@ use App\Http\Controllers\WorkshopController;
 use App\Http\Middleware\EnsureEventIsPublished;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('landing.show', 'ccs-2026');
-});
+Route::get('/', [HomeController::class, 'show'])->name('home');
+Route::get('/events', [EventsController::class, 'index'])->name('events.index');
+Route::post('/contact', [ContactMessageController::class, 'storeGeneral'])->name('contact.store.general');
 
 Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->group(function () {
     Route::get('/', [LandingPageController::class, 'show'])->name('landing.show');
@@ -79,6 +82,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->except('show')
             ->parameters(['gallery-photos' => 'galleryPhoto']);
         Route::resource('events.testimonials', TestimonialController::class)->except('show');
+        Route::resource('events.reels', ReelController::class)->except('show');
         Route::get('events/{event}/contact-messages', [AdminContactMessageController::class, 'index'])->name('events.contact-messages.index');
         Route::get('events/{event}/newsletter-subscribers', [AdminNewsletterSubscriberController::class, 'index'])->name('events.newsletter-subscribers.index');
         Route::resource('events.faqs', FaqController::class)->except('show');

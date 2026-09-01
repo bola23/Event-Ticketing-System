@@ -31,6 +31,7 @@
                         ['prefix' => 'admin.events.ticket-types', 'route' => 'admin.events.ticket-types.index', 'label' => __('Ticket Types')],
                         ['prefix' => 'admin.events.workshops', 'route' => 'admin.events.workshops.index', 'label' => __('Workshops')],
                         ['prefix' => 'admin.events.agenda-items', 'route' => 'admin.events.agenda-items.index', 'label' => __('Agenda')],
+                        ['prefix' => 'admin.events.reels', 'route' => 'admin.events.reels.index', 'label' => __('Reels')],
                         ['prefix' => 'admin.events.gallery-photos', 'route' => 'admin.events.gallery-photos.index', 'label' => __('Gallery')],
                         ['prefix' => 'admin.events.testimonials', 'route' => 'admin.events.testimonials.index', 'label' => __('Testimonials')],
                         ['prefix' => 'admin.events.contact-messages', 'route' => 'admin.events.contact-messages.index', 'label' => __('Contact Messages')],
