@@ -32,14 +32,23 @@ class SponsorRequestTest extends TestCase
         ];
     }
 
-    public function test_the_landing_page_includes_the_sponsor_request_form(): void
+    public function test_the_form_page_renders(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Published]);
 
-        $response = $this->get(route('landing.show', $event).'?lang=en');
+        $response = $this->get(route('sponsor-requests.create', $event).'?lang=en');
 
         $response->assertOk();
         $response->assertSee('action="'.route('sponsor-requests.store', $event).'"', false);
+    }
+
+    public function test_draft_event_returns_404_on_the_form_page(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Draft]);
+
+        $response = $this->get(route('sponsor-requests.create', $event));
+
+        $response->assertStatus(404);
     }
 
     public function test_visitor_can_submit_a_sponsor_request(): void
@@ -49,7 +58,8 @@ class SponsorRequestTest extends TestCase
 
         $response = $this->post(route('sponsor-requests.store', $event), $this->validPayload());
 
-        $response->assertRedirect(route('landing.show', $event).'#partners');
+        $response->assertRedirect(route('sponsor-requests.create', $event));
+        $response->assertSessionHas('sponsor_request_success', true);
         $this->assertDatabaseHas('sponsor_requests', [
             'event_id' => $event->id,
             'name_en' => 'Acme Interiors',
@@ -62,19 +72,28 @@ class SponsorRequestTest extends TestCase
         Storage::disk('public')->assertExists($sponsorRequest->logo_path);
     }
 
-    public function test_website_instagram_facebook_and_message_are_optional(): void
+    public function test_the_success_message_shows_after_submission(): void
+    {
+        Storage::fake('public');
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+
+        $this->post(route('sponsor-requests.store', $event), $this->validPayload());
+        $response = $this->get(route('sponsor-requests.create', $event).'?lang=en');
+
+        $response->assertSee("Thanks — we'll review your request and be in touch soon.");
+    }
+
+    public function test_only_website_url_is_optional(): void
     {
         Storage::fake('public');
         $event = Event::factory()->create(['status' => EventStatus::Published]);
         $payload = $this->validPayload();
-        unset($payload['website_url'], $payload['instagram_url'], $payload['facebook_url'], $payload['message']);
+        unset($payload['website_url']);
 
         $response = $this->post(route('sponsor-requests.store', $event), $payload);
 
-        $response->assertRedirect(route('landing.show', $event).'#partners');
-        $this->assertDatabaseHas('sponsor_requests', [
-            'event_id' => $event->id, 'website_url' => null, 'instagram_url' => null, 'facebook_url' => null, 'message' => null,
-        ]);
+        $response->assertRedirect(route('sponsor-requests.create', $event));
+        $this->assertDatabaseHas('sponsor_requests', ['event_id' => $event->id, 'website_url' => null]);
     }
 
     public function test_bilingual_name_is_required(): void
@@ -91,6 +110,18 @@ class SponsorRequestTest extends TestCase
         $this->assertDatabaseCount('sponsor_requests', 0);
     }
 
+    public function test_contact_name_is_required(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $payload = $this->validPayload();
+        $payload['contact_name'] = '';
+
+        $response = $this->post(route('sponsor-requests.store', $event), $payload);
+
+        $response->assertSessionHasErrors('contact_name');
+        $this->assertDatabaseCount('sponsor_requests', 0);
+    }
+
     public function test_logo_is_required(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Published]);
@@ -100,6 +131,42 @@ class SponsorRequestTest extends TestCase
         $response = $this->post(route('sponsor-requests.store', $event), $payload);
 
         $response->assertSessionHasErrors('logo');
+        $this->assertDatabaseCount('sponsor_requests', 0);
+    }
+
+    public function test_instagram_url_is_required(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $payload = $this->validPayload();
+        unset($payload['instagram_url']);
+
+        $response = $this->post(route('sponsor-requests.store', $event), $payload);
+
+        $response->assertSessionHasErrors('instagram_url');
+        $this->assertDatabaseCount('sponsor_requests', 0);
+    }
+
+    public function test_facebook_url_is_required(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $payload = $this->validPayload();
+        unset($payload['facebook_url']);
+
+        $response = $this->post(route('sponsor-requests.store', $event), $payload);
+
+        $response->assertSessionHasErrors('facebook_url');
+        $this->assertDatabaseCount('sponsor_requests', 0);
+    }
+
+    public function test_message_is_required(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $payload = $this->validPayload();
+        unset($payload['message']);
+
+        $response = $this->post(route('sponsor-requests.store', $event), $payload);
+
+        $response->assertSessionHasErrors('message');
         $this->assertDatabaseCount('sponsor_requests', 0);
     }
 
@@ -139,6 +206,19 @@ class SponsorRequestTest extends TestCase
         $this->assertDatabaseCount('sponsor_requests', 0);
     }
 
+    public function test_instagram_and_facebook_must_be_urls_not_bare_usernames(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+        $payload = $this->validPayload();
+        $payload['instagram_url'] = '@myhandle';
+        $payload['facebook_url'] = 'myhandle';
+
+        $response = $this->post(route('sponsor-requests.store', $event), $payload);
+
+        $response->assertSessionHasErrors(['instagram_url', 'facebook_url']);
+        $this->assertDatabaseCount('sponsor_requests', 0);
+    }
+
     public function test_draft_event_returns_404_on_submit(): void
     {
         $event = Event::factory()->create(['status' => EventStatus::Draft]);
@@ -154,5 +234,14 @@ class SponsorRequestTest extends TestCase
 
         $response->assertOk();
         $response->assertDontSee('Become a Sponsor');
+    }
+
+    public function test_event_header_links_to_the_sponsor_request_page(): void
+    {
+        $event = Event::factory()->create(['status' => EventStatus::Published]);
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('href="'.route('sponsor-requests.create', $event).'"', false);
     }
 }
