@@ -24,9 +24,9 @@ class SponsorRequestStoreRequest extends FormRequest
             'phone' => ['required', (new Phone)->international()],
             'logo' => ['required', 'image', 'max:4096'],
             'website_url' => ['nullable', 'url', 'max:2048'],
-            'instagram_url' => ['nullable', 'url', 'max:2048'],
-            'facebook_url' => ['nullable', 'url', 'max:2048'],
-            'message' => ['nullable', 'string', 'max:5000'],
+            'instagram_url' => ['required', 'url', 'max:2048'],
+            'facebook_url' => ['required', 'url', 'max:2048'],
+            'message' => ['required', 'string', 'max:5000'],
         ];
     }
 

@@ -8,10 +8,16 @@ use App\Http\Controllers\Concerns\HandlesMediaUploads;
 use App\Http\Requests\SponsorRequestStoreRequest;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SponsorRequestController extends Controller
 {
     use HandlesMediaUploads;
+
+    public function create(Event $event): View
+    {
+        return view('sponsor-requests.create', ['event' => $event]);
+    }
 
     public function store(SponsorRequestStoreRequest $request, Event $event): RedirectResponse
     {
@@ -20,6 +26,6 @@ class SponsorRequestController extends Controller
 
         $event->sponsorRequests()->create($data);
 
-        return redirect()->to(route('landing.show', $event).'#partners')->with('sponsor_request_success', true);
+        return redirect()->route('sponsor-requests.create', $event)->with('sponsor_request_success', true);
     }
 }
