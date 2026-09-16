@@ -4,7 +4,7 @@
     x-data
     x-show="$store.ticketRequest.open"
     x-cloak
-    x-init="if (@js($errors->any())) { $store.ticketRequest.open = true; $store.ticketRequest.ticketTypeId = '{{ old('ticket_type_id') }}'; }"
+    x-init="if (@js($errors->any() && old('_form') === 'ticket-request')) { $store.ticketRequest.open = true; $store.ticketRequest.ticketTypeId = '{{ old('ticket_type_id') }}'; }"
     @keydown.escape.window="$store.ticketRequest.open = false"
     class="fixed inset-0 z-100"
 >
@@ -55,6 +55,7 @@
                     novalidate
                 >
                     @csrf
+                    <input type="hidden" name="_form" value="ticket-request">
 
                     <div>
                         <label for="ticket_type_id" class="block text-sm text-gray-300 mb-1">{{ __('Ticket Type') }}</label>

@@ -22,11 +22,16 @@ Alpine.store('ticketRequest', {
     },
 });
 
+Alpine.store('sponsorRequest', {
+    open: false,
+});
+
 Alpine.start();
 
 window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         Alpine.store('ticketRequest').open = false;
+        Alpine.store('sponsorRequest').open = false;
     }
 });
 
