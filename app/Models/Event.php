@@ -174,6 +174,11 @@ class Event extends Model
         return $this->hasMany(Speaker::class)->orderBy('sort_order');
     }
 
+    public function speakerRequests(): HasMany
+    {
+        return $this->hasMany(SpeakerRequest::class)->latest();
+    }
+
     public function sponsors(): HasMany
     {
         return $this->hasMany(Sponsor::class)->orderBy('sort_order');

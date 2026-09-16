@@ -4,6 +4,7 @@
     $eventSections = [
         ['prefix' => 'admin.events.content', 'route' => 'admin.events.content.edit', 'label' => __('Landing Page Content')],
         ['prefix' => 'admin.events.speakers', 'route' => 'admin.events.speakers.index', 'label' => __('Speakers')],
+        ['prefix' => 'admin.events.speaker-requests', 'route' => 'admin.events.speaker-requests.index', 'label' => __('Speaker Requests')],
         ['prefix' => 'admin.events.sponsors', 'route' => 'admin.events.sponsors.index', 'label' => __('Partners')],
         ['prefix' => 'admin.events.sponsor-requests', 'route' => 'admin.events.sponsor-requests.index', 'label' => __('Sponsor Requests')],
         ['prefix' => 'admin.events.ticket-types', 'route' => 'admin.events.ticket-types.index', 'label' => __('Ticket Types')],

@@ -1,8 +1,16 @@
 {{-- resources/views/landing/partials/speakers.blade.php --}}
-@if($event->speakers->isNotEmpty() && $event->isSectionVisible('speakers'))
+@if($event->isSectionVisible('speakers'))
     <section id="speakers" class="ccs-section scroll-mt-24">
-        <div class="ccs-eyebrow text-ccs-coral" data-reveal>{{ __('Featured Speakers') }}</div>
-        <h2 class="font-display text-3xl md:text-5xl font-extrabold mb-12" data-reveal>{{ __('Voices shaping the industry.') }}</h2>
+        <div class="flex flex-wrap items-end justify-between gap-6 mb-12">
+            <div>
+                <div class="ccs-eyebrow text-ccs-coral" data-reveal>{{ __('Featured Speakers') }}</div>
+                <h2 class="font-display text-3xl md:text-5xl font-extrabold" data-reveal>{{ __('Voices shaping the industry.') }}</h2>
+            </div>
+            <a href="{{ route('speaker-requests.create', $event) }}" class="shrink-0 px-6 py-3 rounded-lg ccs-btn-red text-sm font-bold transition-transform duration-200 hover:scale-[1.03]" data-reveal>
+                {{ __('Become a Speaker') }}
+            </a>
+        </div>
+        @if($event->speakers->isNotEmpty())
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             @foreach($event->speakers as $speaker)
                 <div class="group relative aspect-3/4 rounded-2xl border border-white/10 overflow-hidden select-none" data-reveal data-reveal-delay="{{ min($loop->iteration, 5) }}">
@@ -24,5 +32,6 @@
                 </div>
             @endforeach
         </div>
+        @endif
     </section>
 @endif

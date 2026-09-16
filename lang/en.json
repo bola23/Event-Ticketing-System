@@ -710,5 +710,18 @@
     "Select a tier": "Select a tier",
     "Cancel": "Cancel",
     "Sponsor request approved and added to sponsors.": "Sponsor request approved and added to sponsors.",
-    "Sponsor request rejected successfully.": "Sponsor request rejected successfully."
+    "Sponsor request rejected successfully.": "Sponsor request rejected successfully.",
+    "Become a Speaker": "Become a Speaker",
+    "Speaker Requests": "Speaker Requests",
+    "Name (English)": "Name (English)",
+    "Name (Arabic)": "Name (Arabic)",
+    "Title (English)": "Title (English)",
+    "Title (Arabic)": "Title (Arabic)",
+    "Bio (English)": "Bio (English)",
+    "Bio (Arabic)": "Bio (Arabic)",
+    "What would you like to speak about?": "What would you like to speak about?",
+    "Tell us about yourself and what you'd like to speak about — our team will review your request and follow up.": "Tell us about yourself and what you'd like to speak about — our team will review your request and follow up.",
+    "No speaker requests yet.": "No speaker requests yet.",
+    "Speaker request approved and added to speakers.": "Speaker request approved and added to speakers.",
+    "Speaker request rejected successfully.": "Speaker request rejected successfully."
 }

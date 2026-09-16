@@ -68,6 +68,25 @@ class LandingPageTest extends TestCase
         $response->assertSee('Jane Creator');
     }
 
+    public function test_speakers_section_still_offers_a_speaker_cta_when_no_speakers_yet(): void
+    {
+        $event = Event::factory()->create();
+
+        $response = $this->get(route('landing.show', $event).'?lang=en');
+
+        $response->assertSee('id="speakers"', false);
+        $response->assertSee('Become a Speaker');
+    }
+
+    public function test_speakers_section_omitted_when_hidden(): void
+    {
+        $event = Event::factory()->create(['visible_sections' => ['speakers' => false]]);
+
+        $response = $this->get(route('landing.show', $event));
+
+        $response->assertDontSee('id="speakers"', false);
+    }
+
     public function test_partners_section_still_offers_a_sponsor_cta_when_no_sponsors_yet(): void
     {
         $event = Event::factory()->create();

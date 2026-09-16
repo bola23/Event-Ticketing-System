@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\ReelController;
 use App\Http\Controllers\Admin\SiteContentController;
 use App\Http\Controllers\Admin\SiteFaqController;
 use App\Http\Controllers\Admin\SpeakerController;
+use App\Http\Controllers\Admin\SpeakerRequestController as AdminSpeakerRequestController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\SponsorRequestController as AdminSponsorRequestController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NewsletterSubscriberController;
+use App\Http\Controllers\SpeakerRequestController;
 use App\Http\Controllers\SponsorRequestController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketPaymentController;
@@ -65,6 +67,8 @@ Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->grou
     Route::post('/request', [TicketRequestController::class, 'store'])->name('ticket-requests.store');
     Route::get('/become-a-sponsor', [SponsorRequestController::class, 'create'])->name('sponsor-requests.create');
     Route::post('/become-a-sponsor', [SponsorRequestController::class, 'store'])->name('sponsor-requests.store');
+    Route::get('/become-a-speaker', [SpeakerRequestController::class, 'create'])->name('speaker-requests.create');
+    Route::post('/become-a-speaker', [SpeakerRequestController::class, 'store'])->name('speaker-requests.store');
     Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
     Route::post('/newsletter', [NewsletterSubscriberController::class, 'store'])->name('newsletter.store');
 });
@@ -114,6 +118,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->parameters(['cards' => 'card']);
         Route::resource('events', EventController::class)->except('show');
         Route::resource('events.speakers', SpeakerController::class)->except('show');
+        Route::get('events/{event}/speaker-requests', [AdminSpeakerRequestController::class, 'index'])->name('events.speaker-requests.index');
+        Route::patch('events/{event}/speaker-requests/{speakerRequest}/{status}', [AdminSpeakerRequestController::class, 'updateStatus'])
+            ->name('events.speaker-requests.update-status');
         Route::get('events/{event}/workshops/{workshop}/bookings', [AdminWorkshopController::class, 'bookings'])->name('events.workshops.bookings');
         Route::resource('events.workshops', AdminWorkshopController::class)->except('show');
         Route::resource('events.sponsors', SponsorController::class)->except('show');

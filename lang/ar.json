@@ -708,5 +708,18 @@
     "Select a tier": "اختر فئة",
     "Cancel": "إلغاء",
     "Sponsor request approved and added to sponsors.": "تمت الموافقة على طلب الرعاية وأُضيف إلى قائمة الرعاة.",
-    "Sponsor request rejected successfully.": "تم رفض طلب الرعاية بنجاح."
+    "Sponsor request rejected successfully.": "تم رفض طلب الرعاية بنجاح.",
+    "Become a Speaker": "كن متحدثًا",
+    "Speaker Requests": "طلبات المتحدثين",
+    "Name (English)": "الاسم (بالإنجليزية)",
+    "Name (Arabic)": "الاسم (بالعربية)",
+    "Title (English)": "المسمى الوظيفي (بالإنجليزية)",
+    "Title (Arabic)": "المسمى الوظيفي (بالعربية)",
+    "Bio (English)": "نبذة تعريفية (بالإنجليزية)",
+    "Bio (Arabic)": "نبذة تعريفية (بالعربية)",
+    "What would you like to speak about?": "عمّ تودّ التحدث؟",
+    "Tell us about yourself and what you'd like to speak about — our team will review your request and follow up.": "أخبرنا عن نفسك وعمّا تودّ التحدث عنه — سيقوم فريقنا بمراجعة طلبك والتواصل معك.",
+    "No speaker requests yet.": "لا توجد طلبات متحدثين بعد.",
+    "Speaker request approved and added to speakers.": "تمت الموافقة على طلب المتحدث وأُضيف إلى قائمة المتحدثين.",
+    "Speaker request rejected successfully.": "تم رفض طلب المتحدث بنجاح."
 }
