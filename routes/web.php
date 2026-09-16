@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SiteContentController;
 use App\Http\Controllers\Admin\SiteFaqController;
 use App\Http\Controllers\Admin\SpeakerController;
 use App\Http\Controllers\Admin\SponsorController;
+use App\Http\Controllers\Admin\SponsorRequestController as AdminSponsorRequestController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TicketCheckInController;
 use App\Http\Controllers\Admin\TicketRequestFieldController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NewsletterSubscriberController;
+use App\Http\Controllers\SponsorRequestController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketPaymentController;
 use App\Http\Controllers\TicketRequestController;
@@ -61,6 +63,7 @@ Route::prefix('events/{event}')->middleware(EnsureEventIsPublished::class)->grou
 
     Route::get('/workshops/{workshop}', [WorkshopController::class, 'show'])->name('workshops.show');
     Route::post('/request', [TicketRequestController::class, 'store'])->name('ticket-requests.store');
+    Route::post('/become-a-sponsor', [SponsorRequestController::class, 'store'])->name('sponsor-requests.store');
     Route::post('/contact', [ContactMessageController::class, 'store'])->name('contact.store');
     Route::post('/newsletter', [NewsletterSubscriberController::class, 'store'])->name('newsletter.store');
 });
@@ -113,6 +116,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('events/{event}/workshops/{workshop}/bookings', [AdminWorkshopController::class, 'bookings'])->name('events.workshops.bookings');
         Route::resource('events.workshops', AdminWorkshopController::class)->except('show');
         Route::resource('events.sponsors', SponsorController::class)->except('show');
+        Route::get('events/{event}/sponsor-requests', [AdminSponsorRequestController::class, 'index'])->name('events.sponsor-requests.index');
+        Route::patch('events/{event}/sponsor-requests/{sponsorRequest}/{status}', [AdminSponsorRequestController::class, 'updateStatus'])
+            ->name('events.sponsor-requests.update-status');
         Route::resource('events.ticket-types', TicketTypeController::class)
             ->except('show')
             ->parameters(['ticket-types' => 'ticketType']);

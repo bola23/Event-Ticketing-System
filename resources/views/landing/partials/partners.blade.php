@@ -1,9 +1,17 @@
 {{-- resources/views/landing/partials/partners.blade.php --}}
-@if($event->sponsors->isNotEmpty() && $event->isSectionVisible('partners'))
-    <section id="partners" class="ccs-section scroll-mt-24">
-        <div class="ccs-eyebrow text-ccs-teal-light" data-reveal>{{ __('Sponsors & Partners') }}</div>
-        <h2 class="font-display text-3xl md:text-5xl font-extrabold mb-12" data-reveal>{{ __('Backed by the industry.') }}</h2>
+@if($event->isSectionVisible('partners'))
+    <section id="partners" class="ccs-section scroll-mt-24" x-data>
+        <div class="flex flex-wrap items-end justify-between gap-6 mb-12">
+            <div>
+                <div class="ccs-eyebrow text-ccs-teal-light" data-reveal>{{ __('Sponsors & Partners') }}</div>
+                <h2 class="font-display text-3xl md:text-5xl font-extrabold" data-reveal>{{ __('Backed by the industry.') }}</h2>
+            </div>
+            <button type="button" @click="$store.sponsorRequest.open = true" class="shrink-0 px-6 py-3 rounded-lg ccs-btn-red text-sm font-bold transition-transform duration-200 hover:scale-[1.03]" data-reveal>
+                {{ __('Become a Sponsor') }}
+            </button>
+        </div>
 
+        @if($event->sponsors->isNotEmpty())
         @php
             $tierLabels = [
                 'platinum' => __('Platinum Sponsors'),
@@ -46,5 +54,6 @@
                 </div>
             @endforeach
         </div>
+        @endif
     </section>
 @endif
