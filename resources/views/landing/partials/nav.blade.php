@@ -27,6 +27,7 @@
             <a href="{{ request()->fullUrlWithQuery(['lang' => 'en']) }}" class="px-2.5 py-1.5 transition-colors {{ app()->getLocale() === 'en' ? 'bg-white text-ccs-black' : 'text-gray-400 hover:text-white' }}">EN</a>
             <a href="{{ request()->fullUrlWithQuery(['lang' => 'ar']) }}" class="px-2.5 py-1.5 transition-colors {{ app()->getLocale() === 'ar' ? 'bg-white text-ccs-black' : 'text-gray-400 hover:text-white' }}">AR</a>
         </div>
+        <button type="button" @click="$store.sponsorRequest.open = true" class="hidden sm:inline-flex px-5 py-2.5 rounded-md border border-white/20 text-sm font-bold whitespace-nowrap transition-colors hover:bg-white/10">{{ __('Become a Sponsor') }}</button>
         <a href="{{ $sectionBase }}#tickets" class="px-5 py-2.5 rounded-md ccs-btn-red text-sm font-bold whitespace-nowrap transition-transform duration-200 hover:scale-[1.03]">{{ __('Request Ticket') }}</a>
         <button type="button" aria-label="{{ __('Menu') }}" class="lg:hidden w-11 h-11 rounded-md border border-white/20 transition-colors hover:bg-white/10" @click="open = !open">&#9776;</button>
     </div>
@@ -39,7 +40,8 @@
         <a href="{{ $sectionBase }}#tickets" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Tickets') }}</a>
         <a href="{{ $sectionBase }}#awards" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Awards') }}</a>
         <a href="{{ $sectionBase }}#partners" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('Sponsors') }}</a>
-        <a href="{{ $sectionBase }}#faq" class="py-3.5 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('FAQs') }}</a>
+        <a href="{{ $sectionBase }}#faq" class="py-3.5 border-b border-white/10 font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false">{{ __('FAQs') }}</a>
+        <button type="button" class="py-3.5 text-start font-semibold transition-colors hover:text-ccs-teal-light" @click="open = false; $store.sponsorRequest.open = true">{{ __('Become a Sponsor') }}</button>
         <div class="sm:hidden flex items-center gap-1 text-xs font-bold border border-white/20 rounded-md overflow-hidden mt-4 w-fit">
             <a href="{{ request()->fullUrlWithQuery(['lang' => 'en']) }}" class="px-3 py-2 transition-colors {{ app()->getLocale() === 'en' ? 'bg-white text-ccs-black' : 'text-gray-400 hover:text-white' }}">EN</a>
             <a href="{{ request()->fullUrlWithQuery(['lang' => 'ar']) }}" class="px-3 py-2 transition-colors {{ app()->getLocale() === 'ar' ? 'bg-white text-ccs-black' : 'text-gray-400 hover:text-white' }}">AR</a>
